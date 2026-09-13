@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)]()
 [![Binary Size](https://img.shields.io/badge/binary-%3C2.5MB-blue)]()
-[![CI](https://github.com/afuckingco/sift/actions/workflows/ci.yml/badge.svg)](https://github.com/afuckingco/sift/actions/workflows/ci.yml)
+[![CI](https://github.com/afiqandico/sift/actions/workflows/ci.yml/badge.svg)](https://github.com/afiqandico/sift/actions/workflows/ci.yml)
 
 Sift scans your codebase for hardcoded secrets, API keys, and risky configuration patterns — combining **pattern-based rules** with **Shannon entropy analysis** to catch both known secret formats and unknown, obfuscated ones. It ships as a single static binary with zero external dependencies, built entirely on the Go standard library.
 
@@ -51,21 +51,21 @@ Sift is intentionally minimal. It does not phone home, does not require a config
 
 ### Download a prebuilt binary
 
-Grab the latest release for your platform from the [Releases page](https://github.com/afuckingco/sift/releases):
+Grab the latest release for your platform from the [Releases page](https://github.com/afiqandico/sift/releases):
 
 ```bash
 # Linux
-curl -L https://github.com/afuckingco/sift/releases/latest/download/sift-linux-amd64 -o sift
+curl -L https://github.com/afiqandico/sift/releases/latest/download/sift-linux-amd64 -o sift
 chmod +x sift
 
 # macOS (Apple Silicon)
-curl -L https://github.com/afuckingco/sift/releases/latest/download/sift-macos-arm64 -o sift
+curl -L https://github.com/afiqandico/sift/releases/latest/download/sift-macos-arm64 -o sift
 chmod +x sift
 ```
 
 ```powershell
 # Windows (PowerShell)
-Invoke-WebRequest -Uri "https://github.com/afuckingco/sift/releases/latest/download/sift-windows-amd64.exe" -OutFile "sift.exe"
+Invoke-WebRequest -Uri "https://github.com/afiqandico/sift/releases/latest/download/sift-windows-amd64.exe" -OutFile "sift.exe"
 ```
 
 ### Build from source
@@ -73,7 +73,7 @@ Invoke-WebRequest -Uri "https://github.com/afuckingco/sift/releases/latest/downl
 Requires Go 1.21+.
 
 ```bash
-git clone https://github.com/afuckingco/sift.git
+git clone https://github.com/afiqandico/sift.git
 cd sift
 go build -ldflags="-s -w" -o sift .
 ```
@@ -192,7 +192,7 @@ Sift ships with a working [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 ```yaml
 - name: Run Sift
   run: |
-    curl -L https://github.com/afuckingco/sift/releases/latest/download/sift-linux-amd64 -o sift
+    curl -L https://github.com/afiqandico/sift/releases/latest/download/sift-linux-amd64 -o sift
     chmod +x sift
     ./sift --git-diff .
 ```
@@ -265,8 +265,8 @@ Contributions are welcome. The project's one hard constraint: **zero external de
 
 ## License
 
-MIT License — see [LICENSE](LICENSE) for details. by afuckingco
+MIT License — see [LICENSE](LICENSE) for details. by afiqandico
 
 ---
 
-**Built by [@afuckingco](https://github.com/afuckingco)**
+**Built by [@afiqandico](https://github.com/afiqandico)**

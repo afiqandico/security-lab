@@ -4,7 +4,7 @@
 
 ```bash
 # Add tap (once Afiq adds the tap)
-brew tap afiqandico13/pilgrims https://github.com/afiqandico13/homebrew-pilgrims
+brew tap afiqandico/pilgrims https://github.com/afiqandico/homebrew-pilgrims
 
 # Install
 brew install pilgrims
@@ -22,7 +22,7 @@ brew install --build-from-source packaging/pilgrims.rb
 
 ```bash
 # Add bucket (once bucket exists)
-scoop bucket add pilgrims https://github.com/afiqandico13/scoop-pilgrims
+scoop bucket add pilgrims https://github.com/afiqandico/scoop-pilgrims
 
 # Install
 scoop install pilgrims
@@ -51,14 +51,14 @@ makepkg -si
 ## Docker (any platform)
 
 ```bash
-docker pull ghcr.io/afiqandico13/pilgrims-v17:latest
-docker run --rm ghcr.io/afiqandico13/pilgrims-v17:latest --help
+docker pull ghcr.io/afiqandico/pilgrims-v17:latest
+docker run --rm ghcr.io/afiqandico/pilgrims-v17:latest --help
 ```
 
 ## From source (universal)
 
 ```bash
-git clone https://github.com/afiqandico13/pilgrims-v17.git
+git clone https://github.com/afiqandico/pilgrims-v17.git
 cd pilgrims-v17
 chmod +x pilgrims.sh
 ./pilgrims.sh --help

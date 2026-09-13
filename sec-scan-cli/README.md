@@ -21,7 +21,7 @@ The tool produces a `security_report.md` file with a concise summary of all find
 ## Installation (from source)
 ```bash
 # Clone the monorepo, lalu masuk ke komponen ini
-git clone https://github.com/afiqandico/security-lab.git
+git clone git@github.com:afiqandico/research.git
 cd security-lab/sec-scan-cli
 
 # Install in editable mode (development)

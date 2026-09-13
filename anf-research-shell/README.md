@@ -1,6 +1,6 @@
 # ANF Research Shell
 
-[![CI verify-repro-anf](https://github.com/afiqandico/security-lab/actions/workflows/anf-research-shell-ci.yml/badge.svg)](https://github.com/afiqandico/security-lab/actions/workflows/anf-research-shell-ci.yml)
+[![CI verify-repro-anf](https://github.com/afiqandico/research/actions/workflows/anf-research-shell-ci.yml/badge.svg)](https://github.com/afiqandico/research/actions/workflows/anf-research-shell-ci.yml)
 
 **Integrated & Reproducible Research Workbench — satu terminal untuk pekerjaan peneliti (science, math, CS), dengan output terukur dan tertelusur.**
 *Sebelumnya: AFUCKINGCO. v1.0.0 = rebrand + struktur enterprise/research; v1.5.0+ = fokus research workbench (cyber tidak dipromosikan).*

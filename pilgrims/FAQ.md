@@ -16,8 +16,8 @@ There are two repos:
 
 | Repo                                       | Status     | Audience                                |
 |--------------------------------------------|------------|-----------------------------------------|
-| `afiqandico13/pilgrims` (v13.0)            | legacy     | flat structure, 66 plugins, simpler    |
-| `afiqandico13/pilgrims-v17` (v17.0)        | active     | 20 modules, 53 features, modular arch   |
+| `afiqandico/pilgrims` (v13.0)            | legacy     | flat structure, 66 plugins, simpler    |
+| `afiqandico/pilgrims-v17` (v17.0)        | active     | 20 modules, 53 features, modular arch   |
 
 `pilgrims-v17` is the modern, restructured version. `pilgrims` is preserved for historical reference.
 
@@ -54,7 +54,7 @@ Optional (for specific modules):
 ### How do I install?
 
 ```bash
-git clone https://github.com/afiqandico13/pilgrims-v17.git
+git clone https://github.com/afiqandico/pilgrims-v17.git
 cd pilgrims-v17
 chmod +x pilgrims.sh
 ./pilgrims.sh --help
@@ -63,7 +63,7 @@ chmod +x pilgrims.sh
 Or with Docker:
 
 ```bash
-docker pull ghcr.io/afiqandico13/pilgrims-v17:latest
+docker pull ghcr.io/afiqandico/pilgrims-v17:latest
 docker run --rm pilgrims-v17 --help
 ```
 
@@ -272,8 +272,8 @@ Yes, but:
 ## More questions?
 
 - 📖 Read the [README](README.md) and [USER_GUIDE](USER_GUIDE.md)
-- 💬 Open a [GitHub Discussion](https://github.com/afiqandico13/pilgrims-v17/discussions)
-- 🐛 Report bugs via [GitHub Issues](https://github.com/afiqandico13/pilgrims-v17/issues)
+- 💬 Open a [GitHub Discussion](https://github.com/afiqandico/pilgrims-v17/discussions)
+- 🐛 Report bugs via [GitHub Issues](https://github.com/afiqandico/pilgrims-v17/issues)
 - 📧 Email: afiqandico13@gmail.com (security: see [SECURITY.md](SECURITY.md))
 
 ---

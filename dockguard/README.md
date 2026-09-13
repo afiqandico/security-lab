@@ -27,7 +27,7 @@ No daemon required, no images pulled, runs in milliseconds.
 ### Install
 
 ```bash
-git clone https://github.com/afiqandico13/dockguard.git
+git clone https://github.com/afiqandico/dockguard.git
 cd dockguard
 # No dependencies to install — uses Python stdlib only
 ```
@@ -231,6 +231,6 @@ MIT © 2026 Afiq Andico Pangimpian
 
 ## 🔗 Related Projects
 
-- [pilgrims](https://github.com/afiqandico13/pilgrims) — Bash web security scanner
-- [tokokita](https://github.com/afiqandico13/tokokita) — Security-hardened Node.js shop
-- [kopikita](https://github.com/afiqandico13/kopikita) — ML cafe analytics
+- [pilgrims](https://github.com/afiqandico/pilgrims) — Bash web security scanner
+- [tokokita](https://github.com/afiqandico/tokokita) — Security-hardened Node.js shop
+- [kopikita](https://github.com/afiqandico/kopikita) — ML cafe analytics

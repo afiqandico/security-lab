@@ -11,7 +11,7 @@
 | Versi baseline | **1.6.1** (Integrated & Reproducible Research Workbench — fokus science/math/CS; cyber tidak dipromosikan) |
 | Bahasa inti | zsh (>= 5.0), Python 3 (venv riset: torch/sklearn/numpy/matplotlib/pandas/scipy/sympy) |
 | Lisensi | MIT (lihat `LICENSE`) |
-| Repo | `https://github.com/afiqandico/security-lab` → `anf-research-shell/` (public; monorepo; lokal: `/home/afiq/Documents/ANF-Research-Shell/`) |
+| Repo | `afiqandico/research` (private) → `self-study-for-fun/anf-research-shell/` (lokal: `/home/afiq/Documents/ANF-Research-Shell/`) |
 | Jumlah fungsi inti | 64 (119 → 64 setelah modul cyber operasional diarsipkan; arsip LOKAL `~/Documents/Archive/ANF-cyber-modules-v1.6/` — tidak ikut repo publik) |
 
 ## 2. Cara reproduksi baseline
@@ -165,7 +165,7 @@ byte-identical dengan commit; git status proyek bersih.
 
 ### 8.5 Pemakaian mandiri (clone → make verify) [2026-09-07]
 ```bash
-git clone https://github.com/afiqandico/security-lab && cd security-lab/anf-research-shell
+git clone git@github.com:afiqandico/research.git && cd research/self-study-for-fun/anf-research-shell
 make setup     # python3 -m venv .venv && pip install -r requirements.txt (agregat, ter-pin)
 make verify    # alias: make test
 ```
@@ -247,7 +247,7 @@ dependensi ter-pin, lisensi.
 
 ### 10.1 Onboarding (klon → verifikasi)
 ```bash
-git clone https://github.com/afiqandico/security-lab && cd security-lab/anf-research-shell
+git clone git@github.com:afiqandico/research.git && cd research/self-study-for-fun/anf-research-shell
 make setup     # python3 -m venv .venv && pip install -r requirements.txt (agregat)
 make verify    # A baseline + B JSI1 + C JSI2 + D JSI3 — sandbox, hash vs manifest
 ```
