@@ -19,6 +19,7 @@ Setiap komponen berada di subfolder dengan README dan lisensinya sendiri.
 |---|---|
 | [pilgrims/](pilgrims/) | Framework pentest 20 modul (untuk use-case yang diotorisasi) |
 | [anf-research-shell/](anf-research-shell/) | Research workbench reproduktif (CLI zsh, `make verify` 25 gate, CI) — konsolidasi dari repo ANF-Research-Shell (2026-09-07) |
+| [anf-cyber-shell/](anf-cyber-shell/) | Workbench purple-team/cyber-ops (CLI zsh: recon, C2, exploit, defense, analitik deteksi C2; `make verify` 10 gate) — lab berizin saja |
 
 ## Satu CLI: `seclab`
 
@@ -34,6 +35,7 @@ Semua tool di repo ini bisa dipakai lewat **satu entry point** (unified CLI):
 ./seclab ci-scan           # sec-scan-cli — pipeline scan (npm/pip/gitleaks)
 ./seclab pilgrims --help   # framework pentest
 ./seclab anf               # research workbench
+./seclab anf-cyber         # purple-team/cyber-ops workbench
 ```
 
 `seclab` hanya men-dispatcher; tiap tool tetap berjalan di subfoldernya dengan

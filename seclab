@@ -25,7 +25,7 @@ cd "$SELF_DIR"
 # runner adalah fungsi bash bernama run_<name> di bawah.
 # ---------------------------------------------------------------------------
 
-TOOLS=(scan-secret lint-docker anon-log scan ci-scan pilgrims anf)
+TOOLS=(scan-secret lint-docker anon-log scan ci-scan pilgrims anf anf-cyber)
 
 desc() {
   case "$1" in
@@ -36,6 +36,7 @@ desc() {
     ci-scan)      echo "Pipeline scan CI/CD multi-stack (sec-scan-cli, bash)";;
     pilgrims)     echo "Framework pentest 20 modul (pilgrims, bash)";;
     anf)          echo "Research workbench reproduktif (anf-research-shell, zsh)";;
+    anf-cyber)    echo "Workbench purple-team/cyber-ops (anf-cyber-shell, zsh)";;
   esac
 }
 
@@ -95,6 +96,16 @@ run_anf() {
   fi
 }
 
+run_anf-cyber() {
+  # ANF Cyber Shell: pastikan install.sh sudah menaruh `anf-cyber` di PATH,
+  # fallback ke script di subfolder.
+  if command -v anf-cyber >/dev/null 2>&1 && [ "$(readlink -f "$(command -v anf-cyber)")" != "$PWD/ANF-Cyber-Shell/bin/anf-cyber" ]; then
+    anf-cyber "$@"
+  else
+    (cd ANF-Cyber-Shell && exec bash ./bin/anf-cyber "$@")
+  fi
+}
+
 # ---------------------------------------------------------------------------
 # Doctor: cek runtime
 # ---------------------------------------------------------------------------
@@ -111,6 +122,7 @@ doctor() {
       ci-scan)     r="bash";     ok=ok;;
       pilgrims)    r="bash+zsh"; ok=ok;;
       anf)         r="bash+zsh"; ok=ok;;
+      anf-cyber)   r="bash+zsh"; ok=ok;;
     esac
     printf '%-14s %-10s %s\n' "$t" "$r" "$ok"
   done

@@ -1,0 +1,29 @@
+# CI — verifikasi ANF Cyber Shell (konsolidasi di monorepo security-lab).
+# Alur == make verify: syntax zsh, baseline selftest, mapping command, box banner.
+# Hanya berjalan saat ada perubahan pada ANF-Cyber-Shell/**.
+name: verify-anf-cyber
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ANF-Cyber-Shell/**'
+  pull_request:
+    paths:
+      - 'ANF-Cyber-Shell/**'
+
+defaults:
+  run:
+    working-directory: ANF-Cyber-Shell
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Install zsh
+        run: sudo apt-get update && sudo apt-get install -y zsh
+
+      - name: Run make verify
+        run: make verify
