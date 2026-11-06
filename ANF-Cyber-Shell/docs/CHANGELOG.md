@@ -1,5 +1,22 @@
 # CHANGELOG — ANF Cyber Shell
 
+## v1.0.4-cyber (Passthrough terkontrol, alias tidak menimpa biner, UX opt-in — 2026-09-13)
+
+**Tema: shell berhenti "mengambil alih" terminal pengguna, dan menyediakan satu pintu aman untuk menjalankan perintah eksternal.**
+
+### Perubahan
+| # | Perubahan | Alasan |
+|---|-----------|--------|
+| 1 | Command baru `anf run -- <cmd> [args]` (fungsi `anf_run`) | Satu-satunya jalur eksekusi perintah eksternal dari dalam ANF; diimplementasikan sebagai `"$@"` tanpa `eval`, sehingga argumen tidak di-reparse dan alias ANF tidak ikut terpanggil (`anf run -- stat` tetap `/usr/bin/stat`). Setiap panggilan dicatat ke `$AF_LOG_FILE`; exit code diteruskan. |
+| 2 | Loop alias tidak lagi menimpa biner nyata | Bila nama command ANF sudah ada di `PATH` (`stat`, `install`, `proxy`, `whois`, `nikto`, `gobuster`, `whatweb`, `hermes`, …), alias dilewati dan nama itu dicatat di `_ANF_SHADOWED`; command ANF tetap tersedia sebagai `anf <cmd>`. `anf config` menampilkan daftar yang dilewati. |
+| 3 | Blok UX (`bat`/`ls`/`grep`/`cd`/`less`/`fd`/`log` replacement) kini **opt-in** (`ANF_UX_ALIASES=1`) | Default shell berperilaku seperti zsh biasa; tidak bentrok dengan kebiasaan pengguna atau tool lain. |
+| 4 | `c2-decode` menulis ke `mktemp "${TMPDIR:-/tmp}/anf-exfil-XXXXXX.bin"` | Sebelumnya path `/tmp/exfil_<HHMMSS>.bin` bisa bertabrakan/ditebak; kini file unik dengan permission aman dari `mktemp`. |
+| 5 | Alias berprefix `/` dihapus dari 3 section | `zsh` memperlakukan `/cmd` sebagai path — alias itu tidak pernah aktif sehingga hanya menimbulkan kebingungan. Alias nama polos tetap dibuat oleh satu loop di akhir file. |
+
+### Verifikasi v1.0.4-cyber
+- `zsh -n code/anf_cyber_shell.zsh` → OK
+- `bash scripts/verify.sh` → PASS=10 FAIL=0 (gate versi kini membandingkan dengan entri teratas CHANGELOG, bukan string hardcoded)
+
 ## v1.0.1-cyber (Bugfix: kotak sejajar + lookup binary tahan-alias — 2026-09-10)
 
 **Tema: dua bug yang muncul di pemakaian harian — border banner/help meleset dan `hermes` gagal dipanggil dari dalam shell.**
@@ -39,7 +56,7 @@ Catatan kejujuran: gate #4 merah ini **pre-existing**, bukan akibat patch kotak/
 **Tema: ANF Cyber Shell dilahirkan ulang sebagai project mandiri berfokus purple-team / cyber-ops, diturunkan dari arsip ANF v1.6.0 yang memuat modul cyber lengkap.**
 
 ### Asal-usul & keputusan
-- Sebelum 2026-09-07: script tunggal **AFUCKINGCO → ANF Research Shell** berisi cyber ops + riset (C2, recon, OSINT, exploit, defense + math/ML).
+- Sebelum 2026-09-07: script tunggal **ANF → ANF Research Shell** berisi cyber ops + riset (C2, recon, OSINT, exploit, defense + math/ML).
 - 2026-09-07: modul cyber **dipisah** dari ANF Research Shell (biar repo riset bersih), diarsipkan ke
   `~/Documents/Archive/ANF-cyber-modules-v1.6/anf_research_shell_v1.6.0_FULL_local.zsh` (snapshot lengkap pra-split).
 - 2026-09-09: project mandiri **ANF-Cyber-Shell** dibangun ulang (**verbatim reuse**) dari arsip tersebut, dengan identitas cyber-first.

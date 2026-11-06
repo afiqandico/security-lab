@@ -5,8 +5,8 @@
 [![Go Version](https://img.shields.io/badge/Go-1.21%2B-00ADD8?logo=go&logoColor=white)](https://golang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)]()
-[![Binary Size](https://img.shields.io/badge/binary-%3C2.5MB-blue)]()
-[![CI](https://github.com/afiqandico/sift/actions/workflows/ci.yml/badge.svg)](https://github.com/afiqandico/sift/actions/workflows/ci.yml)
+[![Binary Size](https://img.shields.io/badge/binary-~3MB%20(stripped)-blue)]()
+[![CI](../../actions/workflows/check.yml/badge.svg)](../../actions/workflows/check.yml)
 
 Sift scans your codebase for hardcoded secrets, API keys, and risky configuration patterns — combining **pattern-based rules** with **Shannon entropy analysis** to catch both known secret formats and unknown, obfuscated ones. It ships as a single static binary with zero external dependencies, built entirely on the Go standard library.
 
@@ -37,7 +37,7 @@ Most secret scanners fall into one of two camps: heavyweight tools with dozens o
 | | Sift |
 |---|---|
 | **Dependencies** | Zero — 100% Go standard library |
-| **Binary size** | ~2.3 MB, single static file |
+| **Binary size** | ~3 MB stripped (`-ldflags="-s -w"`), single static file |
 | **Startup time** | < 100ms |
 | **Detection method** | Regex rules + Shannon entropy (catches unknown/obfuscated secrets) |
 | **Concurrency** | Yes — worker-pool file scanning |
@@ -49,32 +49,14 @@ Sift is intentionally minimal. It does not phone home, does not require a config
 
 ## Installation
 
-### Download a prebuilt binary
-
-Grab the latest release for your platform from the [Releases page](https://github.com/afiqandico/sift/releases):
-
-```bash
-# Linux
-curl -L https://github.com/afiqandico/sift/releases/latest/download/sift-linux-amd64 -o sift
-chmod +x sift
-
-# macOS (Apple Silicon)
-curl -L https://github.com/afiqandico/sift/releases/latest/download/sift-macos-arm64 -o sift
-chmod +x sift
-```
-
-```powershell
-# Windows (PowerShell)
-Invoke-WebRequest -Uri "https://github.com/afiqandico/sift/releases/latest/download/sift-windows-amd64.exe" -OutFile "sift.exe"
-```
-
 ### Build from source
 
-Requires Go 1.21+.
+Requires Go 1.21+. No prebuilt releases are published for this monorepo yet, so
+build locally:
 
 ```bash
-git clone https://github.com/afiqandico/sift.git
-cd sift
+git clone https://github.com/afiqandico/security-lab.git
+cd security-lab/sift
 go build -ldflags="-s -w" -o sift .
 ```
 
@@ -187,14 +169,14 @@ Rules:
 
 ### GitHub Actions
 
-Sift ships with a working [`.github/workflows/ci.yml`](.github/workflows/ci.yml) that runs tests, builds the binary, and — on tagged releases — cross-compiles binaries for Linux, macOS, and Windows. Drop this into any repo to gate pull requests on secret scanning:
+Sift ships with a working [`.github/workflows/ci.yml`](.github/workflows/ci.yml) that runs `go vet`, the test suite, and a stripped build on every push and pull request. Drop this into any repo to gate pull requests on secret scanning:
 
 ```yaml
 - name: Run Sift
   run: |
-    curl -L https://github.com/afiqandico/sift/releases/latest/download/sift-linux-amd64 -o sift
-    chmod +x sift
-    ./sift --git-diff .
+    git clone --depth 1 https://github.com/afiqandico/security-lab.git /tmp/seclab
+    ( cd /tmp/seclab/sift && go build -ldflags="-s -w" -o sift . )
+    /tmp/seclab/sift/sift --git-diff .
 ```
 
 The scan fails the job automatically if any `CRITICAL` or `HIGH` finding is present.

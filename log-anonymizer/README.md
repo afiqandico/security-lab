@@ -18,7 +18,7 @@
 ## Instalasi
 ```bash
 # Clone repo
-git clone https://github.com/afuckingco/log-anonymizer.git
+git clone https://github.com/afiqandico/security-lab.git
 cd log-anonymizer
 # Virtual env (optional)
 python -m venv venv && source venv/bin/activate

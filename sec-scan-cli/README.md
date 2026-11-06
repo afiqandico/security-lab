@@ -4,7 +4,7 @@
 
 > Konsolidasi 2026‑09‑07: project ini menggabungkan `sec-scan-cli` (CLI) dan `secure-ci-pipeline` (pipeline CI/CD) — keduanya sebelumnya berbagi script scanner yang identik.
 
-It ships the required scripts and a bundled Gitleaks binary, so a developer only needs to `pip install sec-scan` (or install from source) and can run:
+It ships the required scripts and downloads a **pinned, SHA-256-verified** Gitleaks release on first run, so you only need Python 3 (plus network access, or an already-installed `gitleaks`):
 
 ```bash
 sec-scan run          # Execute full pipeline (npm, pip, gitleaks, Suricata)
@@ -21,7 +21,7 @@ The tool produces a `security_report.md` file with a concise summary of all find
 ## Installation (from source)
 ```bash
 # Clone the monorepo, lalu masuk ke komponen ini
-git clone git@github.com:afiqandico/research.git
+git clone https://github.com/afiqandico/security-lab.git
 cd security-lab/sec-scan-cli
 
 # Install in editable mode (development)
@@ -42,7 +42,7 @@ sec-scan run
 Runs, in order:
 1. **npm audit** – requires a `package-lock.json` in the working directory.
 2. **pip‑audit** – reads `requirements.txt`.
-3. **Gitleaks** – scans the repository for secrets using the bundled binary.
+3. **Gitleaks** – scans the repository for secrets using the pinned binary downloaded by `scripts/run_gitleaks.sh` (checksum verified).
 4. **Suricata** – launches a Docker container to perform IDS analysis on network traffic (Docker must be running).
 5. Aggregates all outputs into `security_report.md`.
 
@@ -76,7 +76,7 @@ Jalankan manual:
 ```bash
 pip install -r requirements.txt
 ./scripts/run_pip_audit.sh        # → pip_audit.json
-./scripts/run_gitleaks.sh        # → gitleaks.json (binary bundled)
+./scripts/run_gitleaks.sh        # → gitleaks.json (binary diunduh sekali + verifikasi SHA-256)
 ./scripts/aggregate_report.py
 cat security_report.md
 ```
@@ -86,7 +86,7 @@ cat security_report.md
 
 ## Development notes
 - The scripts are located in `scripts/` and are executed via `subprocess`.
-- The `bin/` directory contains the pre‑compiled Gitleaks binary for Windows. It is excluded from the final package via `.gitignore`.
+- Tidak ada binary yang di-commit. `scripts/run_gitleaks.sh` mengunduh rilis Gitleaks resmi sesuai platform, memverifikasi SHA-256, lalu menyimpannya di `.cache/` (di-ignore).
 - To add more scanners, extend `run_script` in `src/sec_scan/cli.py` and add a corresponding shell script under `scripts/`.
 
 ---

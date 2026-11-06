@@ -11,9 +11,7 @@
   dengan bantuan asisten AI (Hermes, model DeepSeek V4 Flash) sebagai alat
   pengembangan — sesuai kebijakan AI disclosure pada README.
 - Tidak ada kode atau konten pihak ketiga yang disalin ke dalam repositori ini;
-  script eksperimen yang di-vendor ke `research/outputs/exp_*/` adalah karya
-  penulis dari proyek riset pribadi (disalin verbatim, sha256 tercatat di
-  `research/outputs/reproducibility_manifest.md`).
+  seluruh script inti, test, dan dokumentasi adalah karya penulis.
 
 ## Copyright
 - Kode dilisensikan **MIT** (lihat `LICENSE`). Karena seluruh konten ditulis

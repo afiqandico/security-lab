@@ -2,7 +2,7 @@
 name = "log-anonymizer"
 version = "0.1.0"
 description = "Toolkit for privacy‑preserving log anonymization"
-authors = [{name = "Afiq Andico", email = "afiq@afuckingco.dev"}]
+authors = [{name = "Afiq Andico", email = "83301093+afiqandico@users.noreply.github.com"}]
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.11"

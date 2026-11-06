@@ -1,26 +1,25 @@
-# ANF Research Shell — requirements agregat (semua deliverable reproducibility)
-# `make setup` membuat .venv + menginstal file ini; `make verify` menjalankan
-# seluruh gate (baseline + JSI1 + JSI2 + JSI3/DCA) dalam sandbox.
+# ANF Research Shell — requirements agregat (opsional, untuk command ML/DL)
+# `make setup` membuat .venv + menginstal file ini. `make verify` sendiri hanya
+# butuh Python stdlib + zsh (tidak memakai paket di bawah).
 #
 # Dikembangkan & diverifikasi pada Python 3.14.4 (Linux), numpy 2.5.2,
-# matplotlib 3.11.1. Numerik deterministik seed 42 — lihat
-# research/outputs/reproducibility_manifest.md.
+# matplotlib 3.11.1. Numerik deterministik: seed 42.
 #
 # torch dipasang CPU-only dari PyTorch index (wheel +cpu tidak ada di PyPI);
 # pilihan ini menjaga CI/instalasi publik ringan (tanpa paket CUDA ~2-4 GB).
 
 --extra-index-url https://download.pytorch.org/whl/cpu
 
-# --- JSI1 mini-SOC ML detector (train_detector_real.py) ---
+# --- ML klasik: benchmark & detektor mini-SOC (anf mlbench) ---
 xgboost==3.4.1
 scikit-learn==1.9.0
 psutil==7.2.2
 scapy==2.7.0
 
-# --- JSI2 VAE validation (run_vae_experiment.py) ---
+# --- Deep learning: smoke test & eksperimen (anf dlcheck) ---
 torch==2.13.0+cpu
 
-# --- JSI3 DCA sweep (dca_sweep_demo.py) ---
+# --- Statistik & simulasi (anf calc/sym, sweep parameter) ---
 scipy==1.18.0
 
 # --- Shared (semua) ---

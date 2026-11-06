@@ -87,23 +87,14 @@ run_pilgrims() {
 }
 
 run_anf() {
-  # ANF Research Shell: pastikan install.sh sudah menaruh `anf` di PATH,
-  # fallback ke script di subfolder.
-  if command -v anf >/dev/null 2>&1 && [ "$(readlink -f "$(command -v anf)")" != "$PWD/anf-research-shell/bin/anf" ]; then
-    anf "$@"
-  else
-    (cd anf-research-shell && exec bash ./bin/anf "$@")
-  fi
+  # ANF Research Shell: selalu jalankan launcher di repo ini (bukan `anf`
+  # global di PATH) supaya versi yang dipakai deterministik.
+  (cd anf-research-shell && exec zsh ./bin/anf "$@")
 }
 
 run_anf-cyber() {
-  # ANF Cyber Shell: pastikan install.sh sudah menaruh `anf-cyber` di PATH,
-  # fallback ke script di subfolder.
-  if command -v anf-cyber >/dev/null 2>&1 && [ "$(readlink -f "$(command -v anf-cyber)")" != "$PWD/ANF-Cyber-Shell/bin/anf-cyber" ]; then
-    anf-cyber "$@"
-  else
-    (cd ANF-Cyber-Shell && exec bash ./bin/anf-cyber "$@")
-  fi
+  # ANF Cyber Shell: selalu jalankan launcher di repo ini.
+  (cd ANF-Cyber-Shell && exec zsh ./bin/anf-cyber "$@")
 }
 
 # ---------------------------------------------------------------------------

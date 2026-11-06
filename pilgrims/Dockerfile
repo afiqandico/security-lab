@@ -5,7 +5,7 @@ LABEL org.opencontainers.image.title="PILGRIMS v17.0" \
       org.opencontainers.image.description="Ultimate Security Framework: 20 modules, 53 advanced features" \
       org.opencontainers.image.source="https://github.com/afiqandico13/pilgrims-v17" \
       org.opencontainers.image.licenses="MIT" \
-      org.opencontainers.image.author="Afiq Andico Pangimpian <afiqandico13@gmail.com>"
+      org.opencontainers.image.author="Afiq Andico Pangimpian <83301093+afiqandico@users.noreply.github.com>"
 
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8 \

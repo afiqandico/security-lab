@@ -17,7 +17,7 @@ setopt INTERACTIVE_COMMENTS GLOB_DOTS NO_LIST_BEEP NO_BEEP NO_BANG_HIST
 autoload -Uz is-at-least
 is-at-least 5.0 "${ZSH_VERSION}" || { print -u2 "ERROR: zsh >= 5.0 required"; return 1; }
 
-export ANF_VERSION="1.0.1-cyber"
+export ANF_VERSION="1.0.4-cyber"
 
 # ==============================================================================
 # SECTION 1 — Colors, Glyphs, Directories, PATH
@@ -1455,7 +1455,7 @@ anf_log() {
 # Status, Config, Paths, Version, Doctor, Install, Update
 # ---------------------------------------------------------------------
 
-anf_config() { print "${C_Y}=== CONFIG ===${C_0}"; print "  ${C_T}Cache:${C_0} $ANF_CACHE_DIR"; print "  ${C_T}Target:${C_0} ${T:-<unset>}"; }
+anf_config() { print "${C_Y}=== CONFIG ===${C_0}"; print "  ${C_T}Cache:${C_0} $ANF_CACHE_DIR"; print "  ${C_T}Target:${C_0} ${T:-<unset>}"; print "  ${C_T}UX alias (ls/cat/grep/cd):${C_0} ${ANF_UX_ALIASES:-0}"; print "  ${C_T}Tanpa alias (bentrok biner):${C_0} ${#_ANF_SHADOWED} ${(j:, :)_ANF_SHADOWED}"; }
 
 anf_paths() { print "${C_Y}=== PATHS ===${C_0}"; print "  ${C_T}Cache:${C_0} $ANF_CACHE_DIR"; print "  ${C_T}Log:${C_0} $AF_LOG_FILE"; }
 
@@ -1658,7 +1658,7 @@ anf_c2_interact() {
 
 anf_c2_exfil() { local sid="$1"; local remote_file="$2"; local local_name="${3:-$(basename $remote_file)}"; _anf_log warn "Pastikan agent menjalankan: base64 -w0 $remote_file"; _anf_log info "Setelah menerima base64 di session, jalankan: /c2-decode <paste>"; }
 
-anf_c2_decode() { local data="$1"; [[ -z "$data" ]] && return 1; local out="/tmp/exfil_$(date +%H%M%S).bin"; echo "$data" | base64 -d > "$out"; _anf_log ok "File saved to $out"; }
+anf_c2_decode() { local data="$1"; [[ -z "$data" ]] && return 1; local out; out="$(mktemp "${TMPDIR:-/tmp}/anf-exfil-XXXXXX.bin")" || return 1; echo "$data" | base64 -d > "$out"; _anf_log ok "File saved to $out"; }
 
 # ---------------------------------------------------------------------
 # OSINT MODULES
@@ -2061,11 +2061,9 @@ _ANF_CMD_DESC+=( \
     why     "Value proposition ANF (mengapa bukan terminal lain)" \
 )
 typeset -ga _ANF_CMD_NAMES=(${(k)_ANF_CMD_DESC})
-for _cmd in gen task q gitx envcard mvp why; do
-    _func="anf_${_cmd//-/_}"
-    (( ${+functions[$_func]} )) && alias "/$_cmd"="$_func"
-done
-unset _cmd _func
+# Tidak ada alias berprefix "/" di sini: zsh memperlakukan "/cmd" sebagai path,
+# jadi alias itu tidak pernah aktif. Alias nama polos didaftarkan oleh satu loop
+# di akhir file (lihat SECTION 17).
 # ==============================================================================
 # SECTION 14 — ANF Research Suite (untuk peneliti: science, math, CS, cyber)
 # Fokus audiens: researcher yang butuh statistik, ML/DL reproducible,
@@ -2307,16 +2305,10 @@ _ANF_CMD_DESC+=( \
     stat     "Statistik dataset numerik (mean/median/std/entropy)" \
     mlbench  "Benchmark deterministik baseline vs IsolationForest -> CSV" \
     dlcheck  "Smoke test DL CPU (torch, deterministic)" \
-    matrix   "Mapping command ANF ke MITRE ATT&CK tactics" \
     dataset  "Registry dataset riset (list/add)" \
     paperstat "Statistik manuskrip (kata/baris/ref)" \
 )
 typeset -ga _ANF_CMD_NAMES=(${(k)_ANF_CMD_DESC})
-for _cmd in mlinfo stat mlbench dlcheck matrix dataset paperstat; do
-    _func="anf_${_cmd//-/_}"
-    (( ${+functions[$_func]} )) && alias "/$_cmd"="$_func"
-done
-unset _cmd _func
 
 # ==============================================================================
 # SECTION 15 — ANF Researcher Workflow v1.4
@@ -2560,11 +2552,6 @@ _ANF_CMD_DESC+=( \
     bib    "Validasi bibliografi .bib (count/duplikat/tipe)" \
 )
 typeset -ga _ANF_CMD_NAMES=(${(k)_ANF_CMD_DESC})
-for _cmd in plot calc sym sha exp csv bib; do
-    _func="anf_${_cmd//-/_}"
-    (( ${+functions[$_func]} )) && alias "/$_cmd"="$_func"
-done
-unset _cmd _func
 # ==============================================================================
 # SECTION 16 — ANF Auto-Provisioning (Linux-focused) v1.5
 # /ensure — cek & auto-install tool yang belum ada di sistem.
@@ -2809,6 +2796,7 @@ anf_help() {
 
         local -a categories=(
         "Core:help status set-target reset-target workspace note doctor config paths version install update selftest targets log"
+        "Passthrough:run"
         "C2 Framework:c2-start c2-stop c2-sessions c2-payload c2-interact c2-exfil c2-decode"
         "Recon:scan subdomains subdomains-json dns whois quickrecon amass gobuster nikto whatweb wifisurvey monitor mac pilgrims"
         "OSINT:osint-email osint-phone cloud-enum wayback"
@@ -2834,16 +2822,44 @@ anf_help() {
     print ""
 }
 
+# ==============================================================================
+# SECTION 17 — Passthrough terkontrol (v1.0.2-cyber, dirapikan v1.0.3)
+# `anf run -- <cmd> [args]` = satu-satunya pintu menjalankan perintah eksternal
+# dari ANF. Tanpa eval, tiap panggilan dicatat ke $AF_LOG_FILE, exit code
+# diteruskan. Alias ANF (stat/install/proxy/...) TIDAK ikut terpanggil karena
+# "$@" tidak di-reparse sebagai alias — `anf run -- stat` tetap /usr/bin/stat.
+# Ditaruh SEBELUM loop alias di bawah supaya `run` ikut dapat alias nama polos.
+# ==============================================================================
+anf_run() {
+    [[ "${1:-}" == "--" ]] && shift
+    if [[ $# -eq 0 ]]; then
+        _anf_log err "Usage: anf run -- <command> [args...]"
+        return 1
+    fi
+    _anf_log info "run: $*"
+    "$@"
+}
+_ANF_CMD_DESC+=( \
+    run    "Jalankan perintah eksternal: anf run -- <cmd> [args]" \
+)
+typeset -ga _ANF_CMD_NAMES=(${(k)_ANF_CMD_DESC})
+
 # Alias command -> fungsi (dibuat DI SINI, setelah semua fungsi command ada).
-# CATATAN: alias dengan prefix "/" TIDAK bekerja di zsh (zsh perlakukan /cmd sbg
-# path). Daftarkan juga nama polos (help -> anf_help, scan -> anf_scan, dst.)
-# supaya bisa dipanggil di shell interaktif tanpa slash.
+# Nama polos saja (help -> anf_help, scan -> anf_scan, run -> anf_run, dst.).
+# Prefix "/" tidak dipakai: zsh memperlakukan "/cmd" sebagai path, sehingga
+# alias berprefix garis-miring itu tidak pernah aktif (dibersihkan di v1.0.3).
+# v1.0.4: JANGAN menimpa biner nyata (stat, install, proxy, whois, nikto,
+# gobuster, whatweb, tor, hermes). Bila nama itu ada di PATH, alias dilewati;
+# perintah ANF tetap bisa dipanggil sebagai `anf <cmd>`.
+typeset -ga _ANF_SHADOWED=()
 for _cmd in "${_ANF_CMD_NAMES[@]}"; do
     _func="anf_${_cmd//-/_}"
-    if (( ${+functions[$_func]} )); then
-        alias "/$_cmd"="$_func"
-        alias "$_cmd"="$_func"
+    (( ${+functions[$_func]} )) || continue
+    if (( ${+commands[$_cmd]} )); then
+        _ANF_SHADOWED+=("$_cmd")
+        continue
     fi
+    alias "$_cmd"="$_func"
 done
 unset _cmd _func
 
@@ -2979,6 +2995,11 @@ _anf_log ok "ANF v${ANF_VERSION} loaded. Type 'help'"
 # ==============================================================================
 # SECTION 13 — Tool Integrations (Auto-generated)
 # ==============================================================================
+# v1.0.4: seluruh blok ini OPT-IN. Default ANF tidak mengganti cat/ls/grep/cd/
+# less/fd/log dengan alternatif, supaya shell berperilaku seperti zsh biasa dan
+# tidak bentrok dengan kebiasaan/tool lain. Aktifkan dengan `ANF_UX_ALIASES=1`
+# di ~/.config/anf-cyber/anfrc (atau `ANF_UX_ALIASES=1 anf`).
+if [[ "${ANF_UX_ALIASES:-0}" == "1" ]]; then
 
 # bat — cat replacement
 if command -v bat >/dev/null 2>&1; then
@@ -3112,3 +3133,5 @@ command -v pipx >/dev/null 2>&1 && export PATH="$HOME/.local/bin:$PATH"
 
 # rclone
 command -v rclone >/dev/null 2>&1 && alias rc='rclone'
+
+fi   # ANF_UX_ALIASES (SECTION 13 opt-in)

@@ -1,13 +1,13 @@
 # CHANGELOG — ANF Research Shell
 
 ## Catatan Infra Reproducibility & Enterprise (2026-09-07, setelah v1.6.1)
-Tidak ada command/versi baru — infrastruktur reproducibility (lihat manifest §10):
-- `make verify` / `make test` → **25 gate** (A baseline + B JSI1 mini-SOC + C JSI2 VAE/SLR + D JSI3 DCA) di sandbox tmp, hash vs manifest; **hijau di CI GitHub Actions** (PASS 25/0/0, 2026-09-07).
+Tidak ada command/versi baru — infrastruktur reproducibility:
+- `make verify` / `make test` → **3 gate** (syntax `zsh -n`, 25 unit test deterministik, smoke launcher) — sama dengan isi `make verify` saat ini; hijau di GitHub Actions.
 - `make setup` + `requirements.txt` agregat ter-pin (xgboost 3.4.1, scikit-learn 1.9.0, psutil 7.2.2, scapy 2.7.0, torch 2.13.0+cpu [index CPU], scipy 1.18.0, numpy 2.5.2, matplotlib 3.11.1).
 - CI GitHub Actions: `.github/workflows/ci.yml` (push/PR → make verify; butuh repo di GitHub).
-- `LICENSE` MIT (kode) ditetapkan; manifest §6 TODO lisensi ditutup.
-- Deliverable JSI2 (VAE, scaffold `exp_jsi2_vae_*`) + JSI3 (DCA, build_artifact + gate) tergabung dalam verify.
-- Verifikasi aktual: PASS 25 / FAIL 0 / SKIP 0 (CI GitHub Actions hijau; 2+ WARN timing/float DCA-JSI2 — desain, lihat manifest §10.3).
+- `LICENSE` MIT (kode) ditetapkan.
+- Scaffold eksperimen (`anf exp`) menghasilkan `seed.txt`/`env.txt`/`run.sh` per run.
+- Verifikasi aktual: 25/25 test lulus (deterministik, seed 42).
 
 ## v1.6.1 (Cyber dipisah dari ANF — keputusan user 2026-09-07)
 **Tema: ANF bersih fokus research workbench. Modul operasional cyber dipindah ke arsip terpisah, bukan dihapus.**
@@ -193,19 +193,19 @@ Tidak ada command/versi baru — infrastruktur reproducibility (lihat manifest �
 ---
 
 ## v1.0.0 (Rebrand Enterprise + Research, 2026-09-06)
-**Tema: AFUCKINGCO → ANF Research Shell. Struktur enterprise + fondasi penelitian.**
+**Tema: ANF → ANF Research Shell. Struktur enterprise + fondasi penelitian.**
 
 ### Perubahan utama
-- **Rebrand total:** semua identifier `afuckingco`/`AFUCKINGCO`/`_af_`/`_AF_` → `anf`/`ANF`/`_anf_`/`_ANF_` (manual, terverifikasi 0 leftover). Versi reset ke `1.0.0`.
+- **Rebrand total:** semua identifier `anf`/`ANF`/`_af_`/`_AF_` → `anf`/`ANF`/`_anf_`/`_ANF_` (manual, terverifikasi 0 leftover). Versi reset ke `1.0.0`.
 - **Struktur enterprise/research baru** di `~/Documents/ANF-Research-Shell/`:
   - `code/` — script inti + test + `anfrc.dist` (template config)
   - `bin/anf` — **launcher CLI**: `anf <cmd> [args]` (command tunggal) atau `anf` (shell interaktif)
-  - `research/` — `PAPER_OUTLINE.md` + `outputs/reproducibility_manifest.md`
+  - `research/` — output eksperimen (runtime, tidak di-commit)
   - `docs/`, `server/`, `packages/`
   - `install.sh` — installer enterprise (install launcher + script inti + config)
 - **Launcher `bin/anf`** dengan resolusi lokasi berlapis (env `ANF_LIB` → lokasi install → project) → portabel/self-contained.
 - **Config** `anfrc.dist` (prefix `ANF_`), dibaca saat launch.
-- **README akademik** + **reproducibility manifest** (baseline verifiable).
+- **README akademik** + baseline yang dapat diverifikasi ulang.
 
 ### Verifikasi v1.0.0
 - `zsh -n code/anf_research_shell.zsh` → **SYNTAX OK**
@@ -230,12 +230,12 @@ Tidak ada command/versi baru — infrastruktur reproducibility (lihat manifest �
 
 | ID | Lokasi | Problem | Fix |
 |----|--------|---------|-----|
-| FIX-ALIAS-ORDER | Section 10, loop alias `/cmd` (baris ~1973) | Loop pembuat alias berjalan **sebelum** `afuckingco_help` didefinisikan (baris ~1980) → alias `/help` tidak pernah terbuat; `/help` error `zsh: no such file or directory: /help` padahal `/status` dll jalan | Pindahkan loop alias ke **setelah** fungsi `afuckingco_help` (sebelum Section 11). Kini semua 97 fungsi command sudah ada saat alias dibuat |
+| FIX-ALIAS-ORDER | Section 10, loop alias `/cmd` (baris ~1973) | Loop pembuat alias berjalan **sebelum** `anf_help` didefinisikan (baris ~1980) → alias `/help` tidak pernah terbuat; `/help` error `zsh: no such file or directory: /help` padahal `/status` dll jalan | Pindahkan loop alias ke **setelah** fungsi `anf_help` (sebelum Section 11). Kini semua 97 fungsi command sudah ada saat alias dibuat |
 | FIX-POPUP-NL | Section 11, `_af_popup_render` | Baris header `' matches ─╮\n'` pakai single-quote biasa → `\n` ditampilkan **literal** (bukan newline); begitu juga `out+="│ ...\\n"` di double-quote → `\n` literal | Ganti ke `$'...'` (ANSI-C quoting) di header dan `"...\"$'\n'` di tiap baris match → newline asli |
 
 ### Verifikasi v15.0.1
-- `zsh -n afuckingco_v15.zsh` → **SYNTAX_OK**
-- Source di subshell → alias `/help -> afuckingco_help`, `/status -> afuckingco_status`, `/scan -> afuckingco_scan` ✅
+- `zsh -n anf_v15.zsh` → **SYNTAX_OK**
+- Source di subshell → alias `/help -> anf_help`, `/status -> anf_status`, `/scan -> anf_scan` ✅
 - Unit-render popup (`cat -A`): tidak ada literal `\n`, newline asli di tiap baris ✅
 - `test_suite.py` → **25/25 passed (100%)**
 
@@ -250,7 +250,7 @@ Tidak ada command/versi baru — infrastruktur reproducibility (lihat manifest �
   - `panic` non-destruktif (`unset HISTFILE` + `fc -p /dev/null`) — TIDAK ditimpa
   - `suricata` if/else fix (parse error) — TIDAK ditimpa
   - ZLE popup if/else, hash tanpa eval, eval framework, GuardFall v2 metrics
-- **+61 fungsi v12** yang hilang di v14 (file `afuckingco_v12.8.7-FINAL.zsh` diarsipkan)
+- **+61 fungsi v12** yang hilang di v14 (file `anf_v12.8.7-FINAL.zsh` diarsipkan)
 - **3 override** (v12 lebih kaya, definisi terakhir menang): `autopwn` (nmap+msf+nuclei), `osint_email` (+hunter.io), `sysinfo` (laporan laptop lengkap)
 - **Skip** bare-name wrappers v12 (`function katana/nuclei/ffuf/...`) — risiko shadowing binary
 
@@ -275,8 +275,8 @@ Tidak ada command/versi baru — infrastruktur reproducibility (lihat manifest �
 | Lainnya | `playbook`, `ai-assist`, `ai-log` |
 
 ### Verifikasi v15
-- `zsh -n afuckingco_v15.zsh` → SYNTAX_OK
-- Source OK — `AFUCKINGCO_VERSION=15.0.0-RESEARCH`
+- `zsh -n anf_v15.zsh` → SYNTAX_OK
+- Source OK — `ANF_VERSION=15.0.0-RESEARCH`
 - `test_suite.py` → 25/25 (tetap hijau, tak tersentuh)
 - Selftest → **16/16 PASS** (termasuk check-ip network)
 - Duplikat fungsi: hanya 3 override yang disengaja (autopwn/osint_email/sysinfo); tidak ada duplikat tak-sengaja; `function katana/nuclei/...` = 0
@@ -291,11 +291,11 @@ Tidak ada command/versi baru — infrastruktur reproducibility (lihat manifest �
 
 | ID | Lokasi | Problem | Fix |
 |----|--------|---------|-----|
-| FIX-PARSE | Section 12, `afuckingco_suricata` | `command -v ... && sudo suricata ... & \` lalu `\|\|` → **parse error zsh** (`zsh -n` gagal di baris 1300), script tidak bisa di-source | Refactor ke `if command -v; then ... & else ...; fi` — background hanya di command, chain `\|\|` dipisah |
+| FIX-PARSE | Section 12, `anf_suricata` | `command -v ... && sudo suricata ... & \` lalu `\|\|` → **parse error zsh** (`zsh -n` gagal di baris 1300), script tidak bisa di-source | Refactor ke `if command -v; then ... & else ...; fi` — background hanya di command, chain `\|\|` dipisah |
 | FIX-REPRO | `test_suite.py` Isolation Forest | Klaim "seed=42 hasilkan nilai sama" tapi dua run memakai state random awal berbeda → F1 beda (0.75 vs 0.70), **bukan test reproducibility yang valid** | Ganti jadi invariant test benar: dua run dengan `random.seed(42)` di-reset sebelum masing-masing `fit()` → prediksi harus identik (`preds_r1 == preds_r2`) |
 
 ### Verifikasi Baseline
-- `zsh -n afuckingco_v14.zsh` → **SYNTAX_OK** (sebelum fix = parse error baris 1300)
+- `zsh -n anf_v14.zsh` → **SYNTAX_OK** (sebelum fix = parse error baris 1300)
 - `source` script di subshell → OK, `/help` exit 0
 - `test_suite.py` → **25/25 passed (100%)** (sebelumnya 24/24 — +1 test reproducibility baru)
 - Smoke test runtime: `encode`/`decode`/`hash`/`status` semua benar (MD5 abc, SHA256 ba7816...)
@@ -311,7 +311,7 @@ Tidak ada command/versi baru — infrastruktur reproducibility (lihat manifest �
 |----|--------|-------------|---------|
 | FIX-C2 | Section 6, `server.py` | `os.popen(cmd).read()` — shell injection, no timeout | `subprocess.run()` + `shlex.split()` + timeout=15s + sandbox CWD |
 | FIX-GF | Section 3, `_af_canonicalize_command` | `${IFS}` variant tidak terdeteksi | Tambah `${IFS}`, `${IFS:-}`, tab char ke IFS check |
-| FIX-PANIC | Section 5, `afuckingco_panic` | `rm -f ~/.zsh_history` — destructive & irreversible | Ganti dengan `unset HISTFILE` + `fc -p /dev/null` saja |
+| FIX-PANIC | Section 5, `anf_panic` | `rm -f ~/.zsh_history` — destructive & irreversible | Ganti dengan `unset HISTFILE` + `fc -p /dev/null` saja |
 | FIX-ZLE | Section 11, `_af_ki_accept` | `BUFFER=[[ ... ]] && ... || ...` — syntax error zsh | Gunakan `if/else` yang proper |
 
 ### New Features

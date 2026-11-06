@@ -1,8 +1,3 @@
-```console
-┌──(test㉿afuckingco)-[~]
-└─$ cat CONTRIBUTING.md
-```
-
 # Contributing Guidelines
 
 > Thank you for considering contributing! This guide applies across all repositories under this account, including monorepos that bundle multiple subprojects in different languages.

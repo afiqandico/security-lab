@@ -1,0 +1,75 @@
+# .gitignore — Security Lab (root)
+# Tujuan: artefak build/runtime, venv, cache, dan hasil scan TIDAK ikut ter-commit.
+
+# --- Python ---------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.whl
+
+# --- Node -----------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-error.log*
+coverage/
+*.tsbuildinfo
+
+# --- Rahasia / konfigurasi lokal -----------------------------------------
+# Jangan pernah commit kredensial nyata. Contoh aman: .env.example
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.pfx
+id_rsa*
+secrets.yml
+secrets.yaml
+
+# --- Artefak runtime & hasil scan ---------------------------------------
+*.log
+logs/
+sift/sift
+seclab-report*.json
+report.json
+reports/
+scan-results/
+scan_output/
+out/
+*.sarif
+eve.json
+fast.log
+suricata.log
+*.pcap
+*.pcapng
+*.cap
+# Pcap sintetis kecil (fixture) tetap boleh di-commit lewat pengecualian:
+!testdata/**/*.pcap
+!testdata/**/*.pcapng
+
+# --- Go -------------------------------------------------------------------
+*.test
+*.out
+/vendor/
+
+# --- OS / editor ----------------------------------------------------------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/

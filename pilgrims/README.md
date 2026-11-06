@@ -52,7 +52,7 @@ These exist as scaffolding to demonstrate the framework's structure and are clea
 
 ```bash
 # 1. Clone
-git clone https://github.com/afuckingco/pilgrims.git
+git clone https://github.com/afiqandico/security-lab.git
 cd pilgrims
 
 # 2. Install dependencies (Debian/Ubuntu/Kali/WSL2)
@@ -154,8 +154,8 @@ Roadmap:
 
 ## 👤 Author
 
-**afuckingco** — Security researcher, tooling developer.
-GitHub: [@afuckingco](https://github.com/afuckingco)
+**Afiq Andico Pangimpian** — Security researcher, tooling developer.
+GitHub: [@afiqandico](https://github.com/afiqandico)
 
 > *Security is not a product, but a process. Pilgrims is the automation of that process.*
 

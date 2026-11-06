@@ -1,0 +1,39 @@
+# .gitleaks.toml — konfigurasi gitleaks untuk repo ini.
+#
+# Target: `gitleaks detect --no-git --redact` = 0 leak, TANPA menyembunyikan
+# kebocoran nyata.
+#
+# Prinsip: sedapat mungkin allowlist hanya cocok pada SATU baris contoh
+# (regexTarget = "line", regex = nilai placeholder itu sendiri). Catatan:
+# gitleaks menggabungkan kondisi dalam satu entri secara OR, sehingga `paths`
+# membuat SELURUH berkas bebas dari pemeriksaan. Karena itu `paths` hanya
+# dipakai untuk dua berkas fixture yang seluruh isinya memang contoh
+# (sift/sift_test.go, dockguard/README.md), dan TIDAK dipakai untuk runbook.md
+# — di runbook.md rahasia baru tetap dilaporkan (diuji dengan menambahkan
+# nilai palsu lain: gitleaks tetap menandainya).
+#
+# Semua nilai di bawah adalah contoh/placeholder untuk dokumentasi dan unit
+# test — tidak pernah menjadi kredensial yang valid.
+
+[extend]
+useDefault = true
+
+# 1) runbook.md — contoh API key pada blok kode dan pada blok "output nyata".
+[[allowlists]]
+description = "runbook.md: contoh API key placeholder (bukan kredensial)"
+regexTarget = "line"
+regexes = ['''api_key = "sk-proj-EXAMPLEEXAMPLE1234567890"''']
+
+# 2) sift/sift_test.go — seluruh berkas adalah fixture unit test: nilai rahasia
+#    contoh dipakai untuk menguji aturan deteksi (S001/S002/S003, ENT01) dan
+#    filter false-positive (JWT/UUID). Tidak ada kredensial nyata di sini.
+[[allowlists]]
+description = "sift/sift_test.go: fixture unit test (contoh nilai untuk menguji detektor)"
+paths = ['''^sift/sift_test\.go$''']
+
+# 3) dockguard/README.md — dokumentasi berisi contoh Dockerfile yang sengaja
+#    buruk (ENV berisi API key contoh, curl|sh, USER root) untuk menjelaskan
+#    aturan DG001-DG010.
+[[allowlists]]
+description = "dockguard/README.md: contoh Dockerfile buruk untuk dokumentasi aturan"
+paths = ['''^dockguard/README\.md$''']

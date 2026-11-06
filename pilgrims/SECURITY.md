@@ -1,8 +1,3 @@
-```console
-┌──(test㉿afuckingco)-[~]
-└─$ cat SECURITY.md
-```
-
 # Security Policy
 
 > Responsible disclosure keeps everyone safe.
@@ -18,9 +13,9 @@
 
 Do not open a public GitHub issue for security vulnerabilities.
 
-Report privately via:
-1. GitHub Security Advisories for this repository
-2. Email: anotherwaltzcompany@gmail.com (subject line: [SECURITY])
+Report privately via **GitHub Security Advisories** for this repository
+(tab *Security* → *Report a vulnerability*). Cara ini privat dan tidak
+memerlukan alamat email pribadi.
 
 Include: description, reproduction steps, affected version/subproject, potential impact.
 

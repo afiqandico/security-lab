@@ -272,9 +272,9 @@ Yes, but:
 ## More questions?
 
 - 📖 Read the [README](README.md) and [USER_GUIDE](USER_GUIDE.md)
-- 💬 Open a [GitHub Discussion](https://github.com/afiqandico/pilgrims-v17/discussions)
-- 🐛 Report bugs via [GitHub Issues](https://github.com/afiqandico/pilgrims-v17/issues)
-- 📧 Email: afiqandico13@gmail.com (security: see [SECURITY.md](SECURITY.md))
+- 💬 Open a [GitHub Discussion](https://github.com/afiqandico/security-lab/discussions)
+- 🐛 Report bugs via [GitHub Issues](https://github.com/afiqandico/security-lab/issues)
+- 🔐 Security report: lihat [SECURITY.md](SECURITY.md) (GitHub Security Advisories)
 
 ---
 

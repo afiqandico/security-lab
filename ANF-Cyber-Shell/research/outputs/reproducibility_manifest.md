@@ -1,7 +1,7 @@
 # Reproducibility Manifest — ANF Cyber Shell
 
-**Versi:** 1.0.1-cyber
-**Tanggal verifikasi:** 2026-09-10
+**Versi:** 1.0.4-cyber
+**Tanggal verifikasi:** 2026-11-06 (v1.0.4-cyber, dijalankan ulang di Linux + zsh 5.9)
 **Command:** `make verify` (atau `bash scripts/verify.sh`)
 
 ## Baseline gates (semua PASS, non-destruktif)

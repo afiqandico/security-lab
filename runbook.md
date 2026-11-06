@@ -1,7 +1,9 @@
 # Runbook — Security Lab Workflow
 
 Contoh alur end-to-end memakai dua tool inti (`sift` + `dockguard`). Semua output
-di bawah adalah hasil eksekusi nyata (2026-09-06; sift v1.0.0, dockguard v1.0.0).
+di bawah adalah hasil eksekusi nyata (diverifikasi ulang 2026-11-06; sift v1.0.0,
+dockguard v1.0.0, Go 1.27, Python 3.14). Nilai rahasia pada contoh adalah
+placeholder yang jelas palsu — jangan pernah menaruh kredensial nyata di repo.
 
 ## 0. Siapkan
 
@@ -31,10 +33,12 @@ FROM node:20-alpine
 CMD ["node", "server.js"]       # tidak ada USER / HEALTHCHECK
 ```
 
+Simpan sebagai `/tmp/demo/Dockerfile`.
+
 ## 2. Scan secret dengan sift
 
 ```bash
-./sift /tmp/demo
+./sift/sift /tmp/demo
 ```
 
 Output nyata:
@@ -42,12 +46,12 @@ Output nyata:
 ```
 🔍 Sift v1.0.0: Smart & Extensible Security Scanner
 
-✅ Loaded 5 default rules + 2 custom rules.
+✅ Loaded 5 default rules.
 
-⚠️  Found 1 issues in 137.938µs:
+⚠️  Found 1 issues in 163.325µs:
 
 [HIGH] Generic Secret/Token (S002)
-  /tmp/demo/app.py:3
+  /tmp/demo/app.py:2
   | api_key = "sk-proj-EXAMPLEEXAMPLE1234567890"
 ```
 

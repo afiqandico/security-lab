@@ -2,7 +2,7 @@
 
 **Purple-Team / Cyber-Operations Zsh Workbench — satu terminal untuk C2, recon, OSINT, exploit, defense, dan deteksi C2, dengan output terukur.**
 
-*Rebuilt standalone dari arsip ANF v1.6.0 (yang berisi modul cyber lengkap), setelah modul cyber dipisah dari ANF Research Shell pada 2026-09-07. Identitas AWAL project ini (sebelum rebrand jadi research workbench) adalah script purple-team AFUCKINGCO → ANF.*
+*Rebuilt standalone dari arsip ANF v1.6.0 (yang berisi modul cyber lengkap), setelah modul cyber dipisah dari ANF Research Shell pada 2026-09-07. Project ini tidak bergantung pada layanan eksternal; seluruh modul berjalan lokal.*
 
 ANF Cyber Shell membungkus seluruh siklus operasi keamanan (recon → C2 → analitik deteksi → defense) ke satu CLI zsh yang deterministik, ter-hardening, dan teruji, berikut engine GuardFall v2 untuk sanitasi input perintah.
 

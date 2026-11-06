@@ -28,8 +28,16 @@ if zsh -n "$F" >/dev/null 2>&1; then ok "zsh -n syntax"; else bad "zsh -n syntax
 
 # 2) Version
 V="$(grep -m1 -oE 'export ANF_VERSION="[^"]+"' "$F" | sed 's/.*"\(.*\)"/\1/')"
-EXPECT="1.0.1-cyber"
-if [[ "$V" == "$EXPECT" ]]; then ok "ANF_VERSION=$V"; else bad "ANF_VERSION=$V (harus $EXPECT)"; fi
+EXPECT="$(grep -m1 -oE '^## v[0-9]+\.[0-9]+\.[0-9]+-cyber' "$ROOT/docs/CHANGELOG.md" | sed 's/^## v//')"
+if [[ -z "$EXPECT" ]]; then
+  bad "versi CHANGELOG tidak terbaca"
+elif [[ "$V" == "$EXPECT" ]]; then
+  ok "ANF_VERSION=$V (sinkron CHANGELOG)"
+elif [[ "$V" =~ ^1\.0\.[0-9]+-cyber$ ]]; then
+  bad "ANF_VERSION=$V tidak sinkron dengan CHANGELOG ($EXPECT)"
+else
+  bad "ANF_VERSION=$V bukan format 1.0.x-cyber"
+fi
 
 # 3) Cache dir
 if grep -q 'ANF_CACHE_DIR.*\.cache/anf-cyber' "$F"; then ok "cache dir anf-cyber"; else bad "cache dir anf-cyber"; fi

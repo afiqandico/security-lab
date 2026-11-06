@@ -1,9 +1,9 @@
 # ANF Research Shell
 
-[![CI verify-repro-anf](https://github.com/afiqandico/research/actions/workflows/anf-research-shell-ci.yml/badge.svg)](https://github.com/afiqandico/research/actions/workflows/anf-research-shell-ci.yml)
+[![CI](../../actions/workflows/anf-research-shell-ci.yml/badge.svg)](../../actions/workflows/anf-research-shell-ci.yml)
 
 **Integrated & Reproducible Research Workbench — satu terminal untuk pekerjaan peneliti (science, math, CS), dengan output terukur dan tertelusur.**
-*Sebelumnya: AFUCKINGCO. v1.0.0 = rebrand + struktur enterprise/research; v1.5.0+ = fokus research workbench (cyber tidak dipromosikan).*
+*v1.0.0 = struktur enterprise/research; v1.5.0+ = fokus research workbench.*
 
 ANF membungkus perhitungan ilmiah, ML/DL, visualisasi, scaffolding eksperimen, dan verifikasi reproducibility ke satu CLI yang deterministik dan teruji.
 
@@ -14,10 +14,10 @@ ANF membungkus perhitungan ilmiah, ML/DL, visualisasi, scaffolding eksperimen, d
 
 - **Science & Math** — statistik, kalkulator, matematika simbolik, visualisasi
 - **ML / DL / Eval** — stack-check, benchmark deterministik, DL smoke test, scaffold eksperimen, data wrangling, bibliografi
-- **Reproducible** — seed deterministik, manifest, 25-test suite, output numerik ke `research/outputs/`
+- **Reproducible** — seed deterministik, 25-test suite, scaffold eksperimen (`seed.txt`/`env.txt`/`run.sh`) per run
 - **Self-contained / Rapi** — auto-install tool Linux (`/ensure`), installer, git, docs
 
-Jalankan `anf why` untuk ringkasan; `research/PAPER_OUTLINE.md` & manifest untuk rencana manuskrip dan bukti baseline.
+Jalankan `anf why` untuk ringkasan singkat dan `anf help` untuk daftar command.
 
 ---
 
@@ -85,23 +85,19 @@ python3 code/test_suite.py                # MUST: 25/25 pass
 bin/anf hash abc                          # MD5 90015098...
 ```
 
-## Reproducibility Enterprise — satu perintah utk SEMUA deliverable
-`make verify` = baseline ANF + 3 deliverable paper (JSI1 mini-SOC, JSI2 VAE/SLR,
-JSI3 DCA) — semua dijalankan di **sandbox** (tanpa polusi ke repo), dicek hash
-dan nilai ilmiah terhadap `research/outputs/reproducibility_manifest.md`.
-
+## Verifikasi & reproduksibilitas
 ```bash
-make setup     # python3 -m venv .venv && pip install -r requirements.txt (pin)
-make verify    # 25 gate: PASS 25 / FAIL 0 / SKIP 0 — hijau di CI GitHub Actions (2026-09-07)
+make verify    # zsh -n + 25 test deterministik + smoke test launcher
+make setup     # opsional: .venv + requirements.txt (untuk command ML/DL)
 ```
-CI GitHub Actions tersedia: `.github/workflows/ci.yml` (jalankan `make verify` di
-setiap push/PR; butuh repo di GitHub). Lisensi kode: MIT (`LICENSE`).
 
-**Berdiri sendiri (standalone):** seluruh script eksperimen sudah di-vendor di
-`research/outputs/exp_*/` (verbatim, sha tercatat di manifest); interpreter
-di-resolve dari `$PYTHON` → `.venv/` repo-local → `$HOME/venv` → `python3`,
-tanpa path berkas/repo luar. `make setup` + deps ter-pin cukup untuk membangun
-& memverifikasi semuanya. Authorship & AI disclosure: lihat `NOTICE.md`.
+`make verify` hanya membutuhkan **zsh + Python 3 stdlib** — tanpa dataset eksternal,
+tanpa venv, tanpa jaringan. Gate-nya: syntax script inti, 25 unit test
+(entropy, ROC, GuardFall, beaconing, C2 math), lalu smoke launcher (`encode`, `hash`).
+
+Artefak eksperimen (`research/outputs/*.csv|*.png`) dihasilkan oleh `anf mlbench`,
+`anf plot`, dan `anf exp`; berkas hasil tidak di-commit (lihat `.gitignore`).
+Authorship & AI disclosure: lihat `NOTICE.md`.
 
 ---
 
@@ -118,12 +114,6 @@ ANF-Research-Shell/
 ├── code/test_suite.py       # 25 test deterministik
 ├── code/anfrc.dist          # template konfigurasi
 ├── docs/CHANGELOG.md        # riwayat versi
-├── research/PAPER_OUTLINE.md
-├── research/outputs/        # manifest + hasil eksperimen (artefak besar di-ignore; source & manifest di-track)
-├── research/archive/        # artefak uji-coba yang diarsipkan (bukan dihapus)
-├── scripts/verify_repro.sh  # verifikasi end-to-end reproducible (sandbox, cek hash vs manifest)
-├── server/                  # placeholder (C2 server historis, tidak dipromosikan)
-├── packages/                # placeholder modular (future)
 └── install.sh               # installer
 ```
 
@@ -134,4 +124,4 @@ Tool untuk **riset keamanan dan edukasi** (lingkungan lab/sendiri). Tidak untuk 
 Tool dikembangkan & didokumentasikan dengan bantuan AI (Hermes, model DeepSeek V4 Flash). Penulis utama: **Afiq Andico Pangimpian** (Independent Researcher).
 
 ## Lisensi
-Kode: **MIT** (lihat `LICENSE`, 2026). Dokumen: proposal CC-BY (menyusul bila perlu). Lihat manifest.
+Kode: **MIT** (lihat `LICENSE`, 2026).
