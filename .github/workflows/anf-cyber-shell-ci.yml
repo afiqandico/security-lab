@@ -4,6 +4,7 @@
 name: verify-anf-cyber
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths:

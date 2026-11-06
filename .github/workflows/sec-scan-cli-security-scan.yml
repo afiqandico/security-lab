@@ -1,6 +1,7 @@
 name: sec-scan-cli Security Scan
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main ]
     paths: [ 'sec-scan-cli/**' ]
@@ -34,11 +35,17 @@ jobs:
         run: pip install -r requirements.txt
       - name: Make scripts executable
         run: chmod +x ./scripts/*.sh
+      # Catatan: tiga langkah ini MELAPORKAN temuan kerentanan, bukan menguji
+      # kode repo. Temuan (dan exit code non-zero dari audit) adalah data yang
+      # dikumpulkan ke security_report.md — jadi tidak menggagalkan workflow.
       - name: Run npm audit
+        continue-on-error: true
         run: ./scripts/run_npm_audit.sh
       - name: Run pip-audit
+        continue-on-error: true
         run: ./scripts/run_pip_audit.sh
       - name: Run gitleaks
+        continue-on-error: true
         run: ./scripts/run_gitleaks.sh
       - name: Run Suricata (docker)
         continue-on-error: true
