@@ -103,10 +103,10 @@ Authorship & AI disclosure: lihat `NOTICE.md`.
 
 ## Struktur
 ```
-ANF-Research-Shell/
+anf-research-shell/
 ├── bin/anf                  # launcher CLI
-├── Makefile                 # make setup / verify / test (enterprise reproducibility)
-├── requirements.txt         # dependensi pin agregat (semua deliverable)
+├── Makefile                 # make setup / verify / test
+├── requirements.txt         # dependensi pin opsional (command ML/DL)
 ├── LICENSE                  # MIT (kode)
 ├── NOTICE.md                # authorship + AI disclosure + pernyataan standalone
 ├── .github/workflows/ci.yml # CI: make verify di push/PR
