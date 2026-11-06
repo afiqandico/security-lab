@@ -73,7 +73,9 @@ func getAllFiles(root string) []string {
 
 		if d.IsDir() {
 			name := d.Name()
-			if strings.HasPrefix(name, ".") || name == "node_modules" || name == "vendor" || name == "target" {
+			// Direktori akar tidak boleh dilewati meskipun namanya diawali titik
+			// (mis. `sift .`): dulu ini membuat pemindaian "." selalu kosong.
+			if path != root && (strings.HasPrefix(name, ".") || name == "node_modules" || name == "vendor" || name == "target") {
 				return filepath.SkipDir
 			}
 			return nil

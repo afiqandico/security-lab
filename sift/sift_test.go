@@ -5,9 +5,41 @@ import (
 	"encoding/json"
 	"io"
 	"os"
+	"path/filepath"
 	"regexp"
 	"testing"
 )
+
+// Regresi: `sift .` dulu selalu melaporkan "Clean" karena direktori akar
+// bernama "." ikut dilewati sebagai direktori tersembunyi.
+func TestGetAllFilesDotRoot(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(dir, "a.py"), []byte("x = 1\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(dir, "sub"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "sub", "b.py"), []byte("y = 2\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	if got := len(getAllFiles(dir)); got != 2 {
+		t.Fatalf("getAllFiles(dir) = %d berkas, ingin 2", got)
+	}
+
+	old, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chdir(old) }()
+	if err := os.Chdir(dir); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(getAllFiles(".")); got != 2 {
+		t.Fatalf("getAllFiles(\".\") = %d berkas, ingin 2 (bug: direktori akar dilewati)", got)
+	}
+}
 
 func TestCalculateEntropy(t *testing.T) {
 	tests := []struct {
