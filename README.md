@@ -23,7 +23,7 @@ Python stdlib atau Go stdlib.
 | [`seclab`](seclab) | bash | Dispatcher: satu perintah untuk semua tool (`seclab list`, `seclab doctor`) | bash | `./seclab doctor` |
 | [`sift/`](sift/) | Go | Secret scanner: 5 rule bawaan + `.siftrules` kustom, Shannon entropy, output pretty/JSON, mode `--git-diff` | Go 1.21+ | 7 unit test (`go test ./...`) |
 | [`dockguard/`](dockguard/) | Python | Linter Dockerfile: 10 rule (DG001–DG010), 3 format output, exit code CI-friendly | Python 3.8+ (stdlib saja) | 47 unit test |
-| [`log-anonymizer/`](log-anonymizer/) | Python | Anonimisasi log: hash, tokenisasi, k-anonymity, Laplace DP; CLI + endpoint FastAPI | Python 3.11+, `pip install -r requirements.txt` | unit test (butuh deps) |
+| [`log-anonymizer/`](log-anonymizer/) | Python | Anonimisasi log: hash, tokenisasi, k-anonymity, Laplace DP; CLI + endpoint FastAPI | Python 3.11+, `pip install -r requirements.txt` | 2 unit test (dengan deps) |
 | [`sec-scan-cli/`](sec-scan-cli/) | Python | Orkestrasi scan: `npm audit`, `pip-audit`, gitleaks (pin + SHA-256), Suricata → laporan agregat | Python 3, tool eksternal opsional | smoke test |
 | [`pilgrims/`](pilgrims/) | bash | Framework pengujian: 20 modul (recon, web, AD, cloud, wireless, red-team, forensik, …) | bash, `nmap`/`curl`/`jq` (modul tertentu) | `tests/unit/run_all.sh` |
 | [`anf-research-shell/`](anf-research-shell/) | zsh | Workbench riset reproduktif: statistik, ML/DL, plot, scaffold eksperimen (seed/env/run.sh), checksum | zsh ≥ 5.0, Python 3 | `make verify` (25 test) |
@@ -86,14 +86,16 @@ Dijalankan di Linux (kernel 7.0), Go 1.27.1, Python 3.14.9, zsh 5.9:
 | `cd dockguard && python3 -m pytest tests` | 47 test, semua lulus |
 | `bash ANF-Cyber-Shell/scripts/verify.sh` | PASS 10 / FAIL 0 |
 | `cd anf-research-shell && make verify` | `zsh -n` OK, 25/25 test lulus |
+| `cd log-anonymizer && pytest -q` | 2 test lulus (venv + deps) |
+| `cd sec-scan-cli && pytest -q` | 2 test lulus |
 | `./seclab doctor` | semua runtime terdeteksi |
 | `gitleaks detect --no-git --redact` | **0 leak** (lihat [`.gitleaks.toml`](.gitleaks.toml)) |
 
 Catatan jujur:
 
 - `log-anonymizer` butuh dependensi pihak ketiga (`pandas`, `click`, `numpy`,
-  `scikit-learn`, `cryptography`, `fastapi`); test-nya tidak dijalankan tanpa
-  `pip install -r requirements.txt`.
+  `scikit-learn`, `cryptography`, `fastapi`); test-nya baru bisa dijalankan
+  setelah `pip install -r requirements.txt` (diuji di venv terpisah).
 - `sec-scan-cli` memanggil tool eksternal; bila tool tidak ada, scanner terkait
   dilewati dan dilaporkan sebagai *skipped*, bukan gagal.
 - `pilgrims` dan `ANF-Cyber-Shell` adalah **wrapper otomasi**: hasilnya

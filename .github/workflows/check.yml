@@ -47,6 +47,9 @@ jobs:
       - name: Build
         working-directory: sift
         run: go build ./...
+      - name: Test
+        working-directory: sift
+        run: go test ./...
 
   seclab:
     name: Unified CLI (seclab smoke)
