@@ -123,11 +123,11 @@ _anf_get_pkg_mgr() {
 # SECTION 3 — GuardFall v2: Enhanced Security Engine
 # [FIX-GF] [NEW-GF-M] [NEW-BENCH]
 #
-# Perubahan dari v13:
+# Changes from v13:
 #   - Unicode/homoglyph normalization (bypass via lookalike chars)
 #   - Expanded patterns: env injection, path traversal, fork bomb, net exfil
 #   - Metrics tracking: TP, FP, FN, TN → Precision, Recall, F1
-#   - Benchmark dataset berlabel (ATTACK/BENIGN) untuk evaluasi kuantitatif
+#   - Labeled benchmark dataset (ATTACK/BENIGN) for quantitative evaluation
 # ==============================================================================
 
 # --- 3.1 Audit + Session ---
@@ -159,7 +159,7 @@ typeset -gi _ANF_GF_TP=0 _ANF_GF_FP=0 _ANF_GF_FN=0 _ANF_GF_TN=0
 
 _anf_gf_record() {
     # $1: decision (BLOCK|ALLOW), $2: ground_truth (ATTACK|BENIGN)
-    # Hanya digunakan saat benchmark berlabel
+    # Only used during the labeled benchmark
     case "${1}_${2}" in
         BLOCK_ATTACK) (( _ANF_GF_TP++ )) ;;
         BLOCK_BENIGN) (( _ANF_GF_FP++ )) ;;
@@ -191,7 +191,7 @@ anf_guardfall_metrics() {
     printf "  %-22s ${C_C}%s${C_0}\n" "F1-Score:"   $f1
     printf "  %-22s ${C_C}%s${C_0}\n" "Accuracy:"   $accuracy
 
-    # Persist ke JSON untuk analisis lanjutan
+    # Persist to JSON for downstream analysis
     if command -v jq >/dev/null 2>&1; then
         jq -n \
             --arg ts "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
@@ -211,15 +211,15 @@ anf_guardfall_metrics() {
 # --- 3.3 Unicode/Homoglyph Normalization [FIX-GF] ---
 _anf_normalize_unicode() {
     local cmd="$1"
-    # Full-width karakter (Unicode block FF00-FF5E) → ASCII
+    # Full-width characters (Unicode block FF00-FF5E) → ASCII
     cmd=${cmd//ｒｍ/rm};     cmd=${cmd//ｃｕｒｌ/curl}
     cmd=${cmd//ｗｇｅｔ/wget}; cmd=${cmd//ｍｋｆｓ/mkfs}
     cmd=${cmd//ｄｄ/dd};      cmd=${cmd//ｎｃ/nc}
-    # Hapus zero-width chars (ZWJ, ZWNJ, BOM, soft-hyphen)
+    # Strip zero-width chars (ZWJ, ZWNJ, BOM, soft-hyphen)
     cmd="${cmd//$'\u200b'/}"; cmd="${cmd//$'\u200c'/}"
     cmd="${cmd//$'\u200d'/}"; cmd="${cmd//$'\ufeff'/}"
     cmd="${cmd//$'\u00ad'/}"
-    # Hapus null bytes
+    # Strip null bytes
     cmd="${cmd//$'\x00'/}"
     print -r -- "$cmd"
 }
@@ -231,11 +231,11 @@ _anf_canonicalize_command() {
     # Step 1: Unicode normalization
     cmd=$(_anf_normalize_unicode "$cmd")
 
-    # Step 2: Strip kutip untuk normalisasi pola
+    # Step 2: Strip quotes to normalize patterns
     cmd=${cmd//\'/}
     cmd=${cmd//\"/}
 
-    # Step 3: IFS manipulation — semua varian [FIX-GF]
+    # Step 3: IFS manipulation — all variants [FIX-GF]
     # $IFS, ${IFS}, ${IFS:-}, IFS=, tab-as-separator
     if [[ "$cmd" == *'$IFS'*   || "$cmd" == *'${IFS}'* || \
           "$cmd" == *'${IFS'*  || "$cmd" == *'IFS='*   || \
@@ -267,7 +267,7 @@ _anf_canonicalize_command() {
         return 1
     fi
 
-    # Step 6: Network exfiltration ke IP lokal/private [NEW-GF]
+    # Step 6: Network exfiltration to a local/private IP [NEW-GF]
     local re_net='^(curl|wget|nc|ncat|netcat)[[:space:]].*https?://(([0-9]{1,3}\.){3}[0-9]{1,3}|localhost)'
     if [[ "$cmd" =~ $re_net ]]; then
         _anf_log err "NETWORK EXFIL BLOCKED (private IP): $original"
@@ -283,7 +283,7 @@ _anf_canonicalize_command() {
         return 1
     fi
 
-    # Step 8: Path traversal yang agresif [NEW-GF]
+    # Step 8: Aggressive path traversal [NEW-GF]
     local re_trav='(\.\./){3,}'
     if [[ "$cmd" =~ $re_trav ]]; then
         _anf_log warn "Path traversal detected: $original"
@@ -304,9 +304,9 @@ _anf_canonicalize_command() {
     return 0
 }
 
-# --- 3.5 Benchmark dengan Labeled Dataset [NEW-BENCH] ---
+# --- 3.5 Benchmark with Labeled Dataset [NEW-BENCH] ---
 anf_benchmark_guardfall() {
-    # Format: "command|ATTACK" atau "command|BENIGN"
+    # Format: "command|ATTACK" or "command|BENIGN"
     local -a dataset=(
         # === ATTACK patterns ===
         "rm'' -rf'' /|ATTACK"
@@ -332,7 +332,7 @@ anf_benchmark_guardfall() {
         "subfinder -silent -d example.com|BENIGN"
     )
 
-    # Reset counters untuk benchmark bersih
+    # Reset counters for a clean benchmark
     _ANF_GF_TP=0; _ANF_GF_FP=0; _ANF_GF_FN=0; _ANF_GF_TN=0
 
     print "${C_Y}╔═════════════════════════════════════════╗"
@@ -373,7 +373,7 @@ anf_benchmark_guardfall() {
     anf_guardfall_metrics
 }
 
-# Policy file (opsional, untuk rule kustom)
+# Policy file (optional, for custom rules)
 _ANF_POLICY_FILE="$ANF_CACHE_DIR/policy.json"
 _anf_init_policy() {
     [[ -f "$_ANF_POLICY_FILE" ]] && return
@@ -433,7 +433,7 @@ anf_doctor() {
     print "${C_Y}=== TOOL HEALTH CHECK ===${C_0}"
     local -a tools=(
         curl wget jq nc python3 git dig
-        fzf tmux rlwrap shlex  # python3 module check nanti
+        fzf tmux rlwrap shlex  # python3 module check later
     )
     local -a missing=()
     for tool in "${tools[@]}"; do
@@ -472,13 +472,13 @@ anf_serve_stop() {
 
 anf_panic() {
     print -r "${C_R}[!] PANIC MODE — SANITIZING SHELL ENVIRONMENT${C_0}"
-    # Catat event panic ke audit log sebelum sanitasi
+    # Record the panic event in the audit log before sanitization
     _anf_audit_log "PANIC" "" "PANIC:initiated by $USER at $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
     unset T http_proxy https_proxy ALL_PROXY
     anf_serve_stop
-    # anf_c2_stop (C2 dipindah ke arsip LOKAL: ~/Documents/Archive/ANF-cyber-modules-v1.6/)
+    # anf_c2_stop (C2 moved to the LOCAL archive: ~/Documents/Archive/ANF-cyber-modules-v1.6/)
     kill $(jobs -p) 2>/dev/null || true
-    # Unset HISTFILE saja — jangan hapus file secara permanen
+    # Only unset HISTFILE — never delete the file permanently
     unset HISTFILE
     fc -p /dev/null
     command clear
@@ -501,7 +501,7 @@ anf_hash() {
 # ==============================================================================
 # SECTION 6 — C2 Framework (HARDENED v2)
 # [FIX-C2] os.popen() → subprocess.run() + shlex + sandbox
-# [NEW-C2LOG] Session logging ke JSONL
+# [NEW-C2LOG] Session logging to JSONL
 # [NEW-C2KILL] SIGTERM graceful shutdown
 # ==============================================================================
 typeset -g AF_C2_DIR="$ANF_CACHE_DIR/c2"
@@ -543,7 +543,7 @@ def bootstrap_ci(s, n_boot=500, conf=0.95):
 
 ent = h(data)
 ci_lo, ci_hi = bootstrap_ci(data)
-norm = ent / 8.0  # normalisasi: max H untuk byte = log₂(256) = 8
+norm = ent / 8.0  # normalization: max H for a byte = log₂(256) = 8
 
 print(f"ENTROPY:{ent:.4f}")
 print(f"CI_LO:{ci_lo:.4f}")
@@ -562,11 +562,11 @@ PYEOF
     norm=$(echo "$py_out"  | awk -F: '/^NORM/{print $2}')
     dlen=$(echo "$py_out"  | awk -F: '/^LEN/{print $2}')
 
-    # Threshold empiris — divalidasi via ROC sweep (eval-entropy-roc):
-    # Plaintext ASCII  : H ∈ [3.5, 4.5]  → kelas normal
+    # Empirical thresholds — validated via ROC sweep (eval-entropy-roc):
+    # Plaintext ASCII  : H ∈ [3.5, 4.5]  → normal class
     # Base64/encoded   : H ∈ [4.5, 6.0]  → suspect
     # Encrypted/random : H ≥ 6.0         → optimal threshold F1≈1.0
-    # Ref: ROC sweep pada 400 sampel sintetis (seed=42)
+    # Ref: ROC sweep over 400 synthetic samples (seed=42)
     local color="$C_G" verdict="Normal / Plaintext (H < 3.8)"
     _anf_float_gt "$ent" 6.0 && {
         color="$C_R"; verdict="ENCRYPTED C2 — H ≥ 6.0 (ROC optimal, near-random byte dist.)"
@@ -625,7 +625,7 @@ std  = math.sqrt(var) if var > 0 else 0
 jitter = (std / mean) * 100 if mean > 0 else 0
 
 # [MATH-02a] Autocorrelation R(lag=1)
-# Nilai mendekati 1.0 → sangat periodik → C2 beaconing
+# Values near 1.0 → highly periodic → C2 beaconing
 def autocorr(data, lag=1):
     n = len(data)
     if n <= lag: return 0.0
@@ -637,8 +637,8 @@ def autocorr(data, lag=1):
 r1 = autocorr(intervals, lag=1)
 
 # [MATH-02b] Chi-Square uniformity test
-# H₀: interval terdistribusi uniform (traffic acak / human-like)
-# Jika ditolak (p < α=0.05) → distribusi tidak uniform → indikasi beaconing
+# H₀: intervals are uniformly distributed (random / human-like traffic)
+# If rejected (p < α=0.05) → non-uniform distribution → beaconing indicator
 def chi_square_uniform(data, bins=10):
     if not data: return 0.0
     lo, hi = min(data), max(data)
@@ -653,7 +653,7 @@ def chi_square_uniform(data, bins=10):
 
 chi2 = chi_square_uniform(intervals)
 df   = 9  # bins - 1
-# Threshold chi2 untuk p=0.05, df=9 → 16.92
+# chi2 threshold for p=0.05, df=9 → 16.92
 p_val_label = "< 0.05 (reject H0)" if chi2 > 16.92 else ">= 0.05 (accept H0)"
 
 print(f"MEAN:{mean:.2f}")
@@ -863,7 +863,7 @@ PYEOF
     print "  ${DIM}Isolation Forest. ICDM 2008, pp. 413-422.${C_0}"
 }
 
-# --- 7.4 Z-Score Baseline (dipertahankan untuk perbandingan) [BASELINE] ---
+# --- 7.4 Z-Score Baseline (kept for comparison) [BASELINE] ---
 anf_c2_zscore() {
     local sample_size="${1:-100}"
     _anf_log ml "Z-Score Multivariate (baseline, n=$sample_size)..."
@@ -937,7 +937,7 @@ PYEOF
 # ==============================================================================
 AF_EVAL_DIR="$ANF_CACHE_DIR/eval"
 
-# --- 8.1 ROC Curve Analysis untuk Entropy Threshold ---
+# --- 8.1 ROC Curve Analysis for the Entropy Threshold ---
 anf_eval_entropy_roc() {
     _anf_log info "Entropy ROC sweep — generating CSV..."
     command -v python3 >/dev/null 2>&1 || { _anf_log err "python3 required"; return 1; }
@@ -959,15 +959,15 @@ def entropy(s):
 def gen_dataset(n=400):
     """Hasilkan dataset berlabel untuk analisis ROC."""
     samples = []
-    # Kelas 0 — plaintext (H rendah)
+    # Class 0 — plaintext (low H)
     for _ in range(n // 4):
         t = ''.join(random.choices('abcdefghijklmnopqrstuvwxyz ', k=200))
         samples.append((entropy(t), 0))
-    # Kelas 0 — base64-like (H sedang)
+    # Class 0 — base64-like (medium H)
     b64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
     for _ in range(n // 4):
         samples.append((entropy(''.join(random.choices(b64, k=200))), 0))
-    # Kelas 1 — encrypted/random (H tinggi)
+    # Class 1 — encrypted/random (high H)
     for _ in range(n // 2):
         samples.append((entropy(''.join(chr(random.randint(0,255)) for _ in range(200))), 1))
     return samples
@@ -1022,7 +1022,7 @@ anf_eval_compare_ml() {
     print "\n${DIM}Full comparison saved: $outfile${C_0}"
 }
 
-# --- 8.3 Export Audit Log ke CSV ---
+# --- 8.3 Export Audit Log to CSV ---
 anf_eval_export_audit() {
     [[ ! -f "$_ANF_AUDIT_LOG" ]] && { _anf_log err "Audit log belum ada."; return 1; }
     command -v jq >/dev/null 2>&1 || { _anf_log err "jq required"; return 1; }
@@ -1075,9 +1075,9 @@ anf_sysinfo() {
 # ==============================================================================
 # SECTION 9.5 — v12 Operational Modules (merged from v12.8.7-FINAL)
 # IP cache, targets, install/update, wireless, playbook, AI assist, selftest,
-# hermes integration. Server C2 v14 & modul operasional dipindah ke arsip
-# cyber-modules-v1.6 (keputusan 2026-09-07: ANF fokus research workbench;
-# arsip LOKAL: ~/Documents/Archive/ANF-cyber-modules-v1.6/ — tidak ikut repo publik).
+# hermes integration. C2 v14 server & operational modules moved to the archive
+# cyber-modules-v1.6 (decision 2026-09-07: ANF focuses on the research workbench;
+# LOCAL archive: ~/Documents/Archive/ANF-cyber-modules-v1.6/ — not part of the public repo).
 # ==============================================================================
 
 AF_TARGETS_FILE="$ANF_CACHE_DIR/targets/list.txt"
@@ -1326,10 +1326,10 @@ _ANF_CMD_DESC=(
 )
 typeset -ga _ANF_CMD_NAMES=(${(k)_ANF_CMD_DESC})
 
-# NOTE: alias /cmd dibuat di bawah (setelah semua fungsi didefinisikan).
-# Dulu di sini -> /help gagal karena anf_help belum ada saat loop.
+# NOTE: the /cmd aliases are created below (after all functions are defined).
+# They used to live here -> /help failed because anf_help did not exist during the loop.
 
-# Help dikategorisasi [NEW-HELP]
+# Categorized help [NEW-HELP]
 anf_help() {
     print "${C_Y}╔═══════════════════════════════════════════════════╗"
     print "║  ANF RESEARCH SHELL v${ANF_VERSION}                 ║"
@@ -1355,7 +1355,7 @@ anf_help() {
     print ""
 }
 
-# Alias /cmd -> fungsi (dibuat DI SINI, setelah semua fungsi command ada).
+# Alias /cmd -> function (created HERE, after all command functions exist).
 for _cmd in "${_ANF_CMD_NAMES[@]}"; do
     _func="anf_${_cmd//-/_}"
     (( ${+functions[$_func]} )) && alias "/$_cmd"="$_func"
@@ -1364,7 +1364,7 @@ unset _cmd _func
 
 # ==============================================================================
 # SECTION 11 — ZLE Widgets (Autocomplete Popup)
-# [FIX-ZLE] Perbaiki logic BUFFER assignment di _anf_ki_accept
+# [FIX-ZLE] Fix the BUFFER assignment logic in _anf_ki_accept
 # ==============================================================================
 typeset -ga _anf_popup_matches
 typeset -gi _anf_popup_sel=1
@@ -1430,7 +1430,7 @@ _anf_ki_up() {
     fi
 }
 
-# [FIX-ZLE] Logic BUFFER assignment diperbaiki (v13 ada syntax error)
+# [FIX-ZLE] BUFFER assignment logic fixed (v13 had a syntax error)
 _anf_ki_accept() {
     if (( _anf_popup_active && ${#_anf_popup_matches} > 0 )); then
         BUFFER="/${_anf_popup_matches[_anf_popup_sel]}"
@@ -1445,7 +1445,7 @@ _anf_ki_accept() {
         local cmd="${${BUFFER#/}%% *}"
         local func="anf_${cmd//-/_}"
         if (( ${+functions[$func]} )); then
-            # [FIX-ZLE] Gunakan if/else bukan assignment langsung
+            # [FIX-ZLE] Use if/else instead of a direct assignment
             if [[ "$BUFFER" == *' '* ]]; then
                 BUFFER="$func ${BUFFER#* }"
             else
@@ -1630,12 +1630,12 @@ command -v pipx >/dev/null 2>&1 && export PATH="$HOME/.local/bin:$PATH"
 command -v rclone >/dev/null 2>&1 && alias rc='rclone'
 
 # ==============================================================================
-# SECTION 13 — ANF Enterprise Commands v1.2 (6 fitur berdampak besar)
-# Ditambahkan 2026-09-06. Berlaku: semua pekerjaan (coding, git, task, riset).
+# SECTION 13 — ANF Enterprise Commands v1.2 (6 high-impact features)
+# Added 2026-09-06. Applies to: all work (coding, git, tasks, research).
 # ==============================================================================
 
 # -----------------------------------------------------------------------------
-# /why — value proposition ANF (mengapa bukan terminal lain)
+# /why — ANF value proposition (why not another terminal)
 # -----------------------------------------------------------------------------
 anf_why() {
     print "${C_M}── ANF RESEARCH SHELL — Integrated & Reproducible Research Workbench ──${C_0}"
@@ -1652,8 +1652,8 @@ anf_why() {
 }
 
 # -----------------------------------------------------------------------------
-# /gen — AI-assisted code generation (via Hermes/opencode bila ada)
-# /gen <prompt>     -> celah: generate draft kode dari deskripsi
+# /gen — AI-assisted code generation (via Hermes/opencode when available)
+# /gen <prompt>     -> gap: generate a code draft from a description
 # -----------------------------------------------------------------------------
 anf_gen() {
     local prompt="${*:-}"
@@ -1676,8 +1676,8 @@ anf_gen() {
 }
 
 # -----------------------------------------------------------------------------
-# /task — orchestrator: jalankan task di tmux session latar (survive restart)
-# /task start <nama> "<cmd>"  /task list  /task attach <nama>
+# /task — orchestrator: run the task in a background tmux session (survives restart)
+# /task start <name> "<cmd>"  /task list  /task attach <name>
 # -----------------------------------------------------------------------------
 anf_task() {
     local action="${1:-}"; shift 2>/dev/null
@@ -1714,8 +1714,8 @@ anf_task() {
 }
 
 # -----------------------------------------------------------------------------
-# /q — pencarian cepat dalam project (grep + tree + file)
-# /q <pattern> [dir]   -> grep -rn, warnai, skip .git/node_modules
+# /q — fast search inside the project (grep + tree + file)
+# /q <pattern> [dir]   -> grep -rn, colored, skips .git/node_modules
 # -----------------------------------------------------------------------------
 anf_q() {
     local pattern="${1:-}"; local dir="${2:-.}"
@@ -1727,7 +1727,7 @@ anf_q() {
 }
 
 # -----------------------------------------------------------------------------
-# /gitx — git quick-ops harian
+# /gitx — daily git quick-ops
 # /gitx s (status) | a (add-all) | c <msg> (commit) | l (log) | b (branch) | p (pull)
 # -----------------------------------------------------------------------------
 anf_gitx() {
@@ -1746,7 +1746,7 @@ anf_gitx() {
 }
 
 # -----------------------------------------------------------------------------
-# /envcard — ringkasan environment/system dalam sekali lihat
+# /envcard — environment/system summary at a glance
 # -----------------------------------------------------------------------------
 anf_envcard() {
     print "${C_M}── OS ──${C_0}";     uname -srm
@@ -1762,7 +1762,7 @@ anf_envcard() {
 
 # -----------------------------------------------------------------------------
 # /mvp — multi-version & branch mgmt
-# /mvp (tag current) | v (versi shell) | b <name> (branch baru) | s <name> (switch)
+# /mvp (tag current) | v (shell version) | b <name> (new branch) | s <name> (switch)
 # -----------------------------------------------------------------------------
 anf_mvp() {
     local op="${1:-}"; shift 2>/dev/null
@@ -1777,7 +1777,7 @@ anf_mvp() {
 }
 
 # -----------------------------------------------------------------------------
-# Registrasi command enterprise (dijalankan di akhir — tetap sesudah definisi).
+# Register enterprise commands (run at the end — still after the definitions).
 # -----------------------------------------------------------------------------
 _ANF_CMD_DESC+=( \
     gen     "AI-assisted code generation (# calls hermes/opencode)" \
@@ -1795,13 +1795,13 @@ for _cmd in gen task q gitx envcard mvp why; do
 done
 unset _cmd _func
 # ==============================================================================
-# SECTION 14 — ANF Research Suite (untuk peneliti: science, math, CS, cyber)
-# Fokus audiens: researcher yang butuh statistik, ML/DL reproducible,
-# benchmark, katalog dataset, dan navigasi cyber (MITRE) dari satu antarmuka.
-# Python dipakai dari venv riset bila ada (torch/sklearn/numpy), fallback python3.
+# SECTION 14 — ANF Research Suite (for researchers: science, math, CS, cyber)
+# Target audience: researchers who need statistics, reproducible ML/DL,
+# benchmarks, dataset catalogs, and cyber navigation (MITRE) from one interface.
+# Python is taken from the research venv when present (torch/sklearn/numpy), python3 fallback.
 # ==============================================================================
 
-# Locate best python (repo-local .venv dulu, lalu venv riset $HOME, fallback python3)
+# Locate the best python (repo-local .venv first, then the $HOME research venv, python3 fallback)
 _anf_py() {
     if [[ -n "$PYTHON" && -x "$PYTHON" ]]; then
         print -r -- "$PYTHON"
@@ -1815,7 +1815,7 @@ _anf_py() {
 }
 
 # -----------------------------------------------------------------------------
-# /mlinfo — cek stack ML/DL tersedia (peneliti butuh tahu lingkungan)
+# /mlinfo — check the available ML/DL stack (researchers need to know the environment)
 # -----------------------------------------------------------------------------
 anf_mlinfo() {
     local py; py="$(_anf_py)"
@@ -1828,7 +1828,7 @@ anf_mlinfo() {
 }
 
 # -----------------------------------------------------------------------------
-# /stat — statistik dataset numerik dari file/pipe (satu kolom per baris)
+# /stat — numeric dataset statistics from a file/pipe (one column per line)
 # /stat <file> [col]  |  echo "1 2 3" | anf stat
 # -----------------------------------------------------------------------------
 anf_stat() {
@@ -1866,8 +1866,8 @@ PYEOF
 }
 
 # -----------------------------------------------------------------------------
-# /mlbench — benchmark deterministik: baseline entropy-threshold vs IsolationForest
-# /mlbench <n> [out.csv]  -> hasil ditulis ke research/outputs bila out.csv
+# /mlbench — deterministic benchmark: baseline entropy-threshold vs IsolationForest
+# /mlbench <n> [out.csv]  -> results written to research/outputs when out.csv is given
 # -----------------------------------------------------------------------------
 anf_mlbench() {
     local n="${1:-400}" out="${2:-}"
@@ -1941,7 +1941,7 @@ PYEOF
 
 # -----------------------------------------------------------------------------
 # /dlcheck — smoke test DL CPU (torch forward pass kecil, deterministik)
-# /dlcheck            -> ringkas;  /dlcheck full  -> trein 3 epoch mini
+# /dlcheck            -> summary;  /dlcheck full  -> mini 3-epoch training
 # -----------------------------------------------------------------------------
 anf_dlcheck() {
     local mode="${1:-quick}"
@@ -1980,7 +1980,7 @@ PYEOF
 }
 
 # -----------------------------------------------------------------------------
-# /dataset — registry dataset riset (lokasi, kelas, tahun) — edit manual
+# /dataset — research dataset registry (location, classes, year) — edit manually
 # -----------------------------------------------------------------------------
 anf_dataset() {
     local action="${1:-list}"
@@ -2010,7 +2010,7 @@ anf_dataset() {
 }
 
 # -----------------------------------------------------------------------------
-# /paperstat — statistik manuskrip (kata/baris/ref/fitur) untuk peneliti
+# /paperstat — manuscript statistics (words/lines/refs/features) for researchers
 # /paperstat <file.md|tex>
 # -----------------------------------------------------------------------------
 anf_paperstat() {
@@ -2048,12 +2048,12 @@ unset _cmd _func
 
 # ==============================================================================
 # SECTION 15 — ANF Researcher Workflow v1.4
-# Melengkapi riset via terminal: visualisasi, kalkulasi, reproduksibilitas,
-# data wrangling, bibliografi. Python dari venv riset bila ada.
+# Complete research from the terminal: visualization, computation, reproducibility,
+# data wrangling, bibliography. Python from the research venv when available.
 # ==============================================================================
 
 # -----------------------------------------------------------------------------
-# /plot — visualisasi data cepat (histogram/scatter/line) -> PNG research/outputs
+# /plot — quick data visualization (histogram/scatter/line) -> PNG research/outputs
 # /plot <file.csv> [col] [hist|scatter|line] [title]
 # -----------------------------------------------------------------------------
 anf_plot() {
@@ -2093,7 +2093,7 @@ PYEOF
 }
 
 # -----------------------------------------------------------------------------
-# /calc — kalkulator ilmiah: ekspresi numerik python aman (tanpa eval-zsh)
+# /calc — scientific calculator: safe python numeric expressions (no zsh eval)
 # /calc "2**10"  |  /calc "sqrt(144)"  |  /calc "sin(pi/6)"
 # -----------------------------------------------------------------------------
 anf_calc() {
@@ -2113,7 +2113,7 @@ PYEOF
 }
 
 # -----------------------------------------------------------------------------
-# /sym — matematika simbolik via sympy (integral, turunan, simplify)
+# /sym — symbolic math via sympy (integral, derivative, simplify)
 # /sym "integrate(x**2, x)"  |  /sym "diff(sin(x)*exp(x), x)"
 # -----------------------------------------------------------------------------
 anf_sym() {
@@ -2142,8 +2142,8 @@ PYEOF
 }
 
 # -----------------------------------------------------------------------------
-# /sha — checksum reproducibility (sha256) untuk manifest
-# /sha <file>   |  /sha dir <dir>  (semua file, kedalaman 2)
+# /sha — reproducibility checksum (sha256) for the manifest
+# /sha <file>   |  /sha dir <dir>  (all files, depth 2)
 # -----------------------------------------------------------------------------
 anf_sha() {
     local target="${1:-}"; local mode="${2:-}"
@@ -2159,8 +2159,8 @@ anf_sha() {
 }
 
 # -----------------------------------------------------------------------------
-# /exp — scaffold eksperimen reproducible: folder + seed + env snapshot
-# /exp <nama>  -> research/outputs/exp_<nama>_<ts>/ {run.sh, env.txt, seed.txt}
+# /exp — scaffold a reproducible experiment: folder + seed + env snapshot
+# /exp <name>  -> research/outputs/exp_<name>_<ts>/ {run.sh, env.txt, seed.txt}
 # -----------------------------------------------------------------------------
 anf_exp() {
     local name="${1:-exp}"
@@ -2189,7 +2189,7 @@ anf_exp() {
 }
 
 # -----------------------------------------------------------------------------
-# /csv — data wrangling cepat: head / summary / kolom
+# /csv — quick data wrangling: head / summary / columns
 # /csv head <file> [n]  |  /csv summary <file>  |  /csv cols <file>
 # -----------------------------------------------------------------------------
 anf_csv() {
@@ -2240,7 +2240,7 @@ PYEOF
 }
 
 # -----------------------------------------------------------------------------
-# /bib — validasi bibliografi .bib (count, duplikat, entry rusak)
+# /bib — validate a .bib bibliography (count, duplicates, broken entries)
 # /bib <file.bib>
 # -----------------------------------------------------------------------------
 anf_bib() {
@@ -2295,11 +2295,11 @@ done
 unset _cmd _func
 # ==============================================================================
 # SECTION 16 — ANF Auto-Provisioning (Linux-focused) v1.5
-# /ensure — cek & auto-install tool yang belum ada di sistem.
-# Fokus Linux (apt/pacman/dnf); brew sebagai fallback. Selalu konfirmasi dulu.
+# /ensure — check & auto-install tools missing from the system.
+# Linux focus (apt/pacman/dnf); brew as fallback. Always confirm first.
 # ==============================================================================
 
-# Tool wajib & opsional, dengan nama paket per package manager.
+# Required & optional tools, with package names per package manager.
 # Format: "binary:pkg-apt:pkg-pacman:pkg-dnf:pkg-brew:urgent(1|0)"
 typeset -ga _ANF_REQUIRED_TOOLS=(
     "git:git:git:git:git:1"

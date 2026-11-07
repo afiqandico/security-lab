@@ -41,22 +41,22 @@ def entropy(s):
     c = Counter(s); n = len(s)
     return -sum((v/n)*math.log2(v/n) for v in c.values())
 
-# H("a") = 0 (satu karakter, entropi nol)
+# H("a") = 0 (single character, zero entropy)
 test("Single char → H=0.0",  round(entropy("aaa"), 4), 0.0)
 # H([0,1] uniform) = 1 bit
 test("Binary uniform → H=1.0", round(entropy("01"*50), 1), 1.0)
-# Max entropy 8 bits untuk byte random
+# Max entropy is 8 bits for random bytes
 enc = ''.join(chr(random.randint(0,255)) for _ in range(5000))
 test("Random bytes → H > 7.5", entropy(enc) > 7.5, True)
-# Plaintext → H rendah
+# Plaintext → low H
 plain = "the quick brown fox jumps over the lazy dog " * 20
 test("Plaintext → H ∈ [3.5, 5.0]", 3.5 < entropy(plain) < 5.0, True)
-# Base64 → H sedang
+# Base64 → medium H
 b64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
 b64str = ''.join(random.choices(b64, k=500))
 test("Base64 → H ∈ [4.5, 6.5]", 4.5 < entropy(b64str) < 6.5, True)
 
-# Bootstrap CI: interval harus mengandung nilai entropy
+# Bootstrap CI: the interval must contain the entropy value
 def bootstrap_ci(s, n_boot=200, conf=0.95):
     n = len(s)
     boots = sorted([entropy(random.choices(s, k=n)) for _ in range(n_boot)])
@@ -129,7 +129,7 @@ def chi_square_uniform(data, bins=10):
     exp = len(data)/bins
     return sum((o-exp)**2/exp for o in obs)
 
-# Beacon periodik: interval konstan → jitter ≈ 0, R(1) tinggi
+# Periodic beacon: constant interval → jitter ≈ 0, R(1) high
 random.seed(42)
 beacon_intervals = [60.0 + random.gauss(0, 0.5) for _ in range(100)]
 mean_b = sum(beacon_intervals)/len(beacon_intervals)
@@ -139,11 +139,11 @@ jitter_b = (std_b/mean_b)*100
 test("Beacon jitter < 5%", jitter_b < 5.0, True)
 test("Beacon autocorr R(1) > 0.0", autocorr(beacon_intervals) > 0.0, True)
 chi2_b = chi_square_uniform(beacon_intervals)
-# Beacon dengan interval sangat periodik (Gaussian sempit) → CLUSTER di 1 bin → chi2 TINGGI
-# chi2 > 16.92 (df=9, α=0.05) → tolak H0 uniformitas → indikasi beaconing
+# Beacon with a highly periodic interval (narrow Gaussian) → CLUSTER in 1 bin → HIGH chi2
+# chi2 > 16.92 (df=9, α=0.05) → reject H0 uniformity → beaconing indicator
 test("Beacon chi2 > threshold 16.92 (non-uniform = periodic)", chi2_b > 16.92, True)
 
-# Traffic acak: interval random → jitter tinggi
+# Random traffic: random intervals → high jitter
 human_intervals = [random.expovariate(1/10) for _ in range(100)]
 mean_h = sum(human_intervals)/len(human_intervals)
 std_h  = math.sqrt(sum((x-mean_h)**2 for x in human_intervals)/len(human_intervals))
@@ -223,7 +223,7 @@ f1=2*prec*rec/(prec+rec) if (prec+rec)>0 else 0.0
 test("Isolation Forest F1 > 0.5",  f1 > 0.5, True)
 test("Isolation Forest Prec > 0.5", prec > 0.5, True)
 test("Isolation Forest Recall > 0.5", rec > 0.5, True)
-# Reproducibility: dua run dengan SEED YANG SAMA harus menghasilkan prediksi identik
+# Reproducibility: two runs with the SAME SEED must produce identical predictions
 random.seed(42)
 clf_r1 = IsolationForest(100, 64, 0.2).fit(X)
 preds_r1 = clf_r1.predict(X)
@@ -268,7 +268,7 @@ def is_blocked(cmd):
     for p in PATTERNS.values():
         if re.search(p, cmd):
             return True
-    # IFS manipulation — deteksi semua varian [FIX-GF]
+    # IFS manipulation — detects all variants [FIX-GF]
     if '$IFS' in cmd or '${IFS}' in cmd or '${IFS' in cmd or 'IFS=' in cmd:
         return True
     # Command substitution
