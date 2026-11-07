@@ -1,47 +1,47 @@
 # Runbook — Security Lab Workflow
 
-Contoh alur end-to-end memakai dua tool inti (`sift` + `dockguard`). Semua output
-di bawah adalah hasil eksekusi nyata (diverifikasi ulang 2026-11-06; sift v1.0.0,
-dockguard v1.0.0, Go 1.27, Python 3.14). Nilai rahasia pada contoh adalah
-placeholder yang jelas palsu — jangan pernah menaruh kredensial nyata di repo.
+An example end-to-end flow using the two core tools (`sift` + `dockguard`). All output
+below comes from real executions (re-verified 2026-11-06; sift v1.0.0,
+dockguard v1.0.0, Go 1.27, Python 3.14). The secret values in the examples are
+obviously fake placeholders — never put real credentials in a repo.
 
-## 0. Siapkan
+## 0. Setup
 
 ```bash
-# bangun sift (Go stdlib, tanpa dependency)
+# build sift (Go stdlib, no dependencies)
 cd sift
 go build -ldflags="-s -w" -o sift .
 ./sift --version        # → Sift v1.0.0
 
-# dockguard cukup dengan Python stdlib
+# dockguard only needs the Python stdlib
 cd ../dockguard
 python3 -m dockguard --version
 ```
 
-## 1. Contoh kode yang bermasalah
+## 1. Example of problematic code
 
 ```python
 # app.py
 def handler():
-    api_key = "sk-proj-EXAMPLEEXAMPLE1234567890"   # secret hardcoded!
+    api_key = "sk-proj-EXAMPLEEXAMPLE1234567890"   # hardcoded secret!
     print("ok")
 ```
 
 ```dockerfile
 # Dockerfile
 FROM node:20-alpine
-CMD ["node", "server.js"]       # tidak ada USER / HEALTHCHECK
+CMD ["node", "server.js"]       # no USER / HEALTHCHECK
 ```
 
-Simpan sebagai `/tmp/demo/Dockerfile`.
+Save it as `/tmp/demo/Dockerfile`.
 
-## 2. Scan secret dengan sift
+## 2. Scan for secrets with sift
 
 ```bash
 ./sift/sift /tmp/demo
 ```
 
-Output nyata:
+Actual output:
 
 ```
 🔍 Sift v1.0.0: Smart & Extensible Security Scanner
@@ -55,13 +55,13 @@ Output nyata:
   | api_key = "sk-proj-EXAMPLEEXAMPLE1234567890"
 ```
 
-## 3. Lint Dockerfile dengan dockguard
+## 3. Lint the Dockerfile with dockguard
 
 ```bash
 python3 -m dockguard --format json --no-color /tmp/demo/Dockerfile
 ```
 
-Output nyata (ringkas):
+Actual output (abridged):
 
 ```json
 {
@@ -78,17 +78,17 @@ Output nyata (ringkas):
 }
 ```
 
-Mode CI-friendly (hanya exit code):
+CI-friendly mode (exit code only):
 
 ```bash
 python3 -m dockguard --quiet /tmp/demo/Dockerfile
-echo $?    # → 1 (ada temuan; 0 = bersih)
+echo $?    # → 1 (findings present; 0 = clean)
 ```
 
-## 4. Perbaiki & verifikasi
+## 4. Fix and verify
 
 ```dockerfile
-# Dockerfile (bersih)
+# Dockerfile (clean)
 FROM node:20-alpine
 USER node
 HEALTHCHECK CMD wget -q --spider http://localhost:3000 || exit 1
@@ -97,10 +97,10 @@ CMD ["node", "server.js"]
 
 ```bash
 python3 -m dockguard --quiet Dockerfile
-echo $?    # → 0 = bersih, siap lanjut ke pipeline
+echo $?    # → 0 = clean, ready to move on to the pipeline
 ```
 
-## 5. Integrasi minimal di CI
+## 5. Minimal CI integration
 
 ```yaml
       - name: Scan secrets
@@ -110,8 +110,8 @@ echo $?    # → 0 = bersih, siap lanjut ke pipeline
           find . -name 'Dockerfile*' -exec python3 -m dockguard --quiet {} \;
 ```
 
-## Catatan
+## Notes
 
-- Exit code: dockguard 0 = bersih, 1 = ada finding, 2 = file tidak ditemukan.
-- Tool lain di repo ini: `log-anonymizer`, `sec-scan-cli`, `pilgrims` — lihat README masing-masing.
-- Gunakan hanya untuk lingkungan *authorized* (lihat README root — Catatan Etika).
+- Exit code: dockguard 0 = clean, 1 = findings present, 2 = file not found.
+- Other tools in this repo: `log-anonymizer`, `sec-scan-cli`, `pilgrims` — see each README.
+- Use only in *authorized* environments (see the root README — Ethics Note).

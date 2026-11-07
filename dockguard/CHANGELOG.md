@@ -1,10 +1,10 @@
 # Changelog — dockguard
 
 ## v1.0.0 — 2026-09-06
-Rilis publik pertama (Python stdlib).
+First public release (Python stdlib).
 
-### Fitur
-- 10 rule lint Dockerfile (USER, HEALTHCHECK, base image tag, dsb.)
+### Features
+- 10 Dockerfile lint rules (USER, HEALTHCHECK, base image tag, etc.)
 - CLI: `--format json|github|pretty`, `--quiet`, `--ignore <rules>`
-- Exit code: 0 bersih / 1 ada finding / 2 file tidak ditemukan
-- Output kompatibel GitHub Actions
+- Exit code: 0 clean / 1 findings present / 2 file not found
+- GitHub Actions-compatible output

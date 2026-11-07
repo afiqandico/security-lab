@@ -1,14 +1,14 @@
 # Changelog — sift
 
 ## v1.0.0 — 2026-09-06
-Rilis publik pertama (go1.21+, murni stdlib).
+First public release (go1.21+, pure stdlib).
 
-### Fitur
-- Deteksi secret hardcoded: 5 pola default + 2 custom rule (termasuk `sk-proj-*`)
-- Analisis entropi Shannon untuk secret tak dikenal/obfuscated
-- Mode git-aware (`--git-diff`) — hanya file berubah
-- Worker-pool file scanning (konkuren)
-- Keluaran pretty/JSON, tanpa telemetri (zero network)
+### Features
+- Hardcoded secret detection: 5 default patterns + 2 custom rules (including `sk-proj-*`)
+- Shannon entropy analysis for unknown/obfuscated secrets
+- Git-aware mode (`--git-diff`) — changed files only
+- Worker-pool file scanning (concurrent)
+- Pretty/JSON output, no telemetry (zero network)
 
-### Teknis
-- Static Linux/macOS/Windows binary (<2.5MB), zero dependency runtime.
+### Technical
+- Static Linux/macOS/Windows binary (<2.5MB), zero runtime dependencies.

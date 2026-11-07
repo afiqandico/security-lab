@@ -1,21 +1,21 @@
 # Log Anonymizer
 
-**Toolkit privasi‑preserving untuk anonimisasi data log**. Menyediakan:
+**Privacy-preserving toolkit for log data anonymization**. Provides:
 
-- **CLI** (Click) dengan sub‑command `hash`, `tokenize`, `k_anonymity`, `diff_privacy`.
-- **FastAPI** endpoint `/anonymize` (POST) untuk anonimisasi via HTTP.
-- **Docker** image yang dapat dijalankan sebagai service mandiri.
-- **Unit tests** (pytest) untuk tiap metode.
+- **CLI** (Click) with the sub-commands `hash`, `tokenize`, `k_anonymity`, `diff_privacy`.
+- **FastAPI** endpoint `/anonymize` (POST) for anonymization over HTTP.
+- **Docker** image that can run as a standalone service.
+- **Unit tests** (pytest) for each method.
 
-## Fitur utama
-| Metode | Deskripsi |
-|--------|-----------|
-| `hash` | SHA‑256 hashing (opsional salt). |
+## Key features
+| Method | Description |
+|--------|-------------|
+| `hash` | SHA-256 hashing (optional salt). |
 | `tokenize` | Deterministic UUID token replacement. |
-| `k_anonymity` | Generalisasi quasi‑identifier dengan parameter `k`. |
-| `diff_privacy` | Tambah noise Laplace pada kolom numerik (parameter `epsilon`). |
+| `k_anonymity` | Quasi-identifier generalization with a `k` parameter. |
+| `diff_privacy` | Adds Laplace noise to numeric columns (`epsilon` parameter). |
 
-## Instalasi
+## Installation
 ```bash
 # Clone repo
 git clone https://github.com/afiqandico/security-lab.git
@@ -25,15 +25,15 @@ python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Penggunaan CLI
+## CLI usage
 ```bash
-# Hash seluruh file teks
+# Hash an entire text file
 python -m log_anonymizer.cli run input.log output_hashed.log --algorithm hash
 
-# Tokenisasi CSV (kolom ip,userid)
+# Tokenize a CSV (columns ip,userid)
 python -m log_anonymizer.cli run data.csv data_tok.csv --algorithm tokenize --columns ip userid
 
-# k‑anonymity pada CSV (quasi‑identifiers timestamp,userid)
+# k-anonymity on a CSV (quasi-identifiers timestamp,userid)
 python -m log_anonymizer.cli run data.csv data_kanon.csv --algorithm k_anonymity --columns timestamp userid --k 5
 
 # Differential privacy (Laplace noise)
@@ -42,13 +42,13 @@ python -m log_anonymizer.cli run data.csv data_dp.csv --algorithm diff_privacy -
 
 ## FastAPI (Remote)
 ```bash
-# Jalankan server
+# Run the server
 uvicorn src.api:app --host 0.0.0.0 --port 8000
-# atau via Docker
+# or via Docker
 docker compose up --build -d
 ```
 
-### Contoh request (curl)
+### Example request (curl)
 ```bash
 curl -X POST http://localhost:8000/anonymize \
   -H "Content-Type: application/json" \
@@ -57,21 +57,21 @@ curl -X POST http://localhost:8000/anonymize \
 
 ## Docker
 ```bash
-# Build dan jalankan semua layanan
+# Build and run all services
 docker compose up --build -d
-# API tersedia di http://localhost:8000, proxy di http://localhost:8080
+# API available at http://localhost:8000, proxy at http://localhost:8080
 ```
 
 ## Testing
 ```bash
-pytest -n auto   # paralel semua tes di src/tests/
+pytest -n auto   # run all tests in parallel in src/tests/
 ```
 
 ## Roadmap
-- **v0.2.0** – dukungan streaming log (Kafka/Fluentd).
-- **v0.3.0** – policy engine (YAML) untuk konfigurasi per‑field.
-- **v0.4.0** – metrik Prometheus + Grafana dashboard.
-- **v1.0.0** – dokumentasi lengkap, contoh CI/CD pipeline.
+- **v0.2.0** – log streaming support (Kafka/Fluentd).
+- **v0.3.0** – policy engine (YAML) for per-field configuration.
+- **v0.4.0** – Prometheus metrics + Grafana dashboard.
+- **v1.0.0** – complete documentation, CI/CD pipeline examples.
 
-## Lisensi
-MIT – lihat file `LICENSE`.
+## License
+MIT – see the `LICENSE` file.
