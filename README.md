@@ -1,148 +1,148 @@
 # Security Lab
 
-Kumpulan alat CLI untuk latihan **purple-team** dan higiene keamanan: secret
-scanning, lint Dockerfile, anonimisasi log, orkestrasi scan CI/CD, framework
-pengujian penetrasi, dan workbench operasi siber. Semua berjalan **lokal** —
-tidak ada layanan berbayar, tidak ada telemetri, sebagian komponen hanya butuh
-Python stdlib atau Go stdlib.
+A collection of CLI tools for **purple-team** practice and security hygiene: secret
+scanning, Dockerfile linting, log anonymisation, CI/CD scan orchestration, a
+penetration-testing framework, and a cyber-operations workbench. Everything runs
+**locally** — no paid services, no telemetry, and some components need only the
+Python standard library or the Go standard library.
 
-> ## ⚠️ Etika dan batas penggunaan
-> Tool ofensif di repo ini (`pilgrims`, `ANF-Cyber-Shell`) **hanya** boleh
-> dijalankan pada sistem yang Anda miliki atau yang Anda punya **izin tertulis**
-> untuk diuji. Menjalankan pemindaian/eksploitasi tanpa izin adalah pelanggaran
-> hukum (di Indonesia: UU ITE) dan etika profesional. Tidak ada laporan temuan
-> organisasi nyata yang dipublikasikan di repo ini; semua target di dokumentasi
-> adalah placeholder (`example.com`, `192.168.x.x`, `10.0.0.x`).
+> ## ⚠️ Ethics and scope of use
+> The offensive tools in this repo (`pilgrims`, `ANF-Cyber-Shell`) may be run **only**
+> against systems you own or have **written permission** to test. Running scans or
+> exploitation without authorisation is a legal violation (in Indonesia: the ITE Law)
+> and a breach of professional ethics. No findings from real organisations are
+> published in this repo; every target in the documentation is a placeholder
+> (`example.com`, `192.168.x.x`, `10.0.0.x`).
 
 ---
 
-## Apa isi repo ini
+## What is in this repo
 
-| Komponen | Bahasa | Fungsi | Prasyarat | Uji |
+| Component | Language | Function | Prerequisites | Tests |
 |---|---|---|---|---|
-| [`seclab`](seclab) | bash | Dispatcher: satu perintah untuk semua tool (`seclab list`, `seclab doctor`) | bash | `./seclab doctor` |
-| [`sift/`](sift/) | Go | Secret scanner: 5 rule bawaan + `.siftrules` kustom, Shannon entropy, output pretty/JSON, mode `--git-diff` | Go 1.21+ | 7 unit test (`go test ./...`) |
-| [`dockguard/`](dockguard/) | Python | Linter Dockerfile: 10 rule (DG001–DG010), 3 format output, exit code CI-friendly | Python 3.8+ (stdlib saja) | 47 unit test |
-| [`log-anonymizer/`](log-anonymizer/) | Python | Anonimisasi log: hash, tokenisasi, k-anonymity, Laplace DP; CLI + endpoint FastAPI | Python 3.11+, `pip install -r requirements.txt` | 2 unit test (dengan deps) |
-| [`sec-scan-cli/`](sec-scan-cli/) | Python | Orkestrasi scan: `npm audit`, `pip-audit`, gitleaks (pin + SHA-256), Suricata → laporan agregat | Python 3, tool eksternal opsional | smoke test |
-| [`pilgrims/`](pilgrims/) | bash | Framework pengujian: 20 modul (recon, web, AD, cloud, wireless, red-team, forensik, …) | bash, `nmap`/`curl`/`jq` (modul tertentu) | `tests/unit/run_all.sh` |
-| [`anf-research-shell/`](anf-research-shell/) | zsh | Workbench riset reproduktif: statistik, ML/DL, plot, scaffold eksperimen (seed/env/run.sh), checksum | zsh ≥ 5.0, Python 3 | `make verify` (25 test) |
-| [`ANF-Cyber-Shell/`](ANF-Cyber-Shell/) | zsh | Workbench cyber-ops: recon/OSINT, C2 ter-hardening, analitik deteksi C2, defense (Suricata/YARA) | zsh ≥ 5.0, tool opsional (`nmap`, `suricata`, `yara`) | `make verify` (10 gate) |
-| [`runbook.md`](runbook.md) | — | Walkthrough end-to-end `sift` + `dockguard` dengan output nyata | — | — |
+| [`seclab`](seclab) | bash | Dispatcher: one command for every tool (`seclab list`, `seclab doctor`) | bash | `./seclab doctor` |
+| [`sift/`](sift/) | Go | Secret scanner: 5 built-in rules + custom `.siftrules`, Shannon entropy, pretty/JSON output, `--git-diff` mode | Go 1.21+ | 7 unit tests (`go test ./...`) |
+| [`dockguard/`](dockguard/) | Python | Dockerfile linter: 10 rules (DG001–DG010), 3 output formats, CI-friendly exit codes | Python 3.8+ (stdlib only) | 47 unit tests |
+| [`log-anonymizer/`](log-anonymizer/) | Python | Log anonymisation: hashing, tokenisation, k-anonymity, Laplace DP; CLI + FastAPI endpoint | Python 3.11+, `pip install -r requirements.txt` | 2 unit tests (with deps) |
+| [`sec-scan-cli/`](sec-scan-cli/) | Python | Scan orchestration: `npm audit`, `pip-audit`, gitleaks (pinned + SHA-256), Suricata → aggregated report | Python 3, optional external tools | smoke test |
+| [`pilgrims/`](pilgrims/) | bash | Testing framework: 20 modules (recon, web, AD, cloud, wireless, red-team, forensics, …) | bash, `nmap`/`curl`/`jq` (certain modules) | `tests/unit/run_all.sh` |
+| [`anf-research-shell/`](anf-research-shell/) | zsh | Reproducible research workbench: statistics, ML/DL, plotting, experiment scaffolding (seed/env/run.sh), checksums | zsh ≥ 5.0, Python 3 | `make verify` (25 tests) |
+| [`ANF-Cyber-Shell/`](ANF-Cyber-Shell/) | zsh | Cyber-ops workbench: recon/OSINT, hardened C2, C2 detection analytics, defence (Suricata/YARA) | zsh ≥ 5.0, optional tools (`nmap`, `suricata`, `yara`) | `make verify` (10 gates) |
+| [`runbook.md`](runbook.md) | — | End-to-end walkthrough of `sift` + `dockguard` with real output | — | — |
 
-Setiap komponen tetap berdiri sendiri (README, lisensi, dependensi sendiri);
-repo ini menyatukan distribusi dan satu entry point.
+Each component remains self-contained (its own README, licence, dependencies);
+this repo consolidates distribution and provides a single entry point.
 
 ---
 
-## Cara menjalankan
+## How to run
 
 ```bash
 git clone https://github.com/afiqandico/security-lab.git
 cd security-lab
 
-./seclab list        # daftar tool
-./seclab doctor      # cek runtime yang tersedia di mesin Anda
+./seclab list        # list tools
+./seclab doctor      # check which runtimes are available on your machine
 ```
 
-### Contoh per tool
+### Per-tool examples
 
 ```bash
 # 1) Secret scanning (sift, Go)
 cd sift && go build -ldflags="-s -w" -o sift . && cd ..
-./seclab scan-secret .              # atau: ./sift/sift --json . > report.json
+./seclab scan-secret .              # or: ./sift/sift --json . > report.json
 
-# 2) Lint Dockerfile (dockguard, Python stdlib)
+# 2) Dockerfile linting (dockguard, Python stdlib)
 ./seclab lint-docker --format json Dockerfile
 
-# 3) Anonimisasi log (log-anonymizer; butuh deps)
+# 3) Log anonymisation (log-anonymizer; needs deps)
 cd log-anonymizer && pip install -r requirements.txt && cd ..
 ./seclab anon-log data/sample.csv /tmp/out.csv --algorithm hash --columns ip
 
-# 4) Pipeline scan CI (sec-scan-cli)
+# 4) CI scan pipeline (sec-scan-cli)
 ./seclab scan --help
-./seclab ci-scan gitleaks           # jalankan satu scanner
+./seclab ci-scan gitleaks           # run a single scanner
 
 # 5) Workbench (zsh)
 ./seclab anf encode hello           # → aGVsbG8=
 ./seclab anf-cyber selftest
 ```
 
-Prasyarat minimum: `git`, `bash`, `python3`. Untuk komponen tertentu: `go`
-(sift), `zsh` (ANF shells), dan tool eksternal yang memang dipanggil (mis.
-`nmap`, `suricata`, `yara`, `gitleaks`) — semua opsional dan dideteksi oleh
+Minimum prerequisites: `git`, `bash`, `python3`. For specific components: `go`
+(sift), `zsh` (ANF shells), and any external tool that is actually invoked (e.g.
+`nmap`, `suricata`, `yara`, `gitleaks`) — all optional and detected by
 `seclab doctor`/`anf doctor`.
 
 ---
 
-## Status verifikasi (2026-11-06)
+## Verification status (2026-11-06)
 
-Dijalankan di Linux (kernel 7.0), Go 1.27.1, Python 3.14.9, zsh 5.9:
+Run on Linux (kernel 7.0), Go 1.27.1, Python 3.14.9, zsh 5.9:
 
-| Cek | Hasil |
+| Check | Result |
 |---|---|
-| `cd sift && go build -ldflags="-s -w" -o sift .` | OK — binary ±3 MB |
-| `cd sift && go test ./...` | OK (7 test) |
-| `cd dockguard && python3 -m pytest tests` | 47 test, semua lulus |
+| `cd sift && go build -ldflags="-s -w" -o sift .` | OK — binary ≈3 MB |
+| `cd sift && go test ./...` | OK (7 tests) |
+| `cd dockguard && python3 -m pytest tests` | 47 tests, all passing |
 | `bash ANF-Cyber-Shell/scripts/verify.sh` | PASS 10 / FAIL 0 |
-| `cd anf-research-shell && make verify` | `zsh -n` OK, 25/25 test lulus |
-| `cd log-anonymizer && pytest -q` | 2 test lulus (venv + deps) |
-| `cd sec-scan-cli && pytest -q` | 2 test lulus |
-| `./seclab doctor` | semua runtime terdeteksi |
-| `gitleaks detect --no-git --redact` | **0 leak** (lihat [`.gitleaks.toml`](.gitleaks.toml)) |
+| `cd anf-research-shell && make verify` | `zsh -n` OK, 25/25 tests passing |
+| `cd log-anonymizer && pytest -q` | 2 tests passing (venv + deps) |
+| `cd sec-scan-cli && pytest -q` | 2 tests passing |
+| `./seclab doctor` | all runtimes detected |
+| `gitleaks detect --no-git --redact` | **0 leaks** (see [`.gitleaks.toml`](.gitleaks.toml)) |
 
-Catatan jujur:
+Honest notes:
 
-- `log-anonymizer` butuh dependensi pihak ketiga (`pandas`, `click`, `numpy`,
-  `scikit-learn`, `cryptography`, `fastapi`); test-nya baru bisa dijalankan
-  setelah `pip install -r requirements.txt` (diuji di venv terpisah).
-- `sec-scan-cli` memanggil tool eksternal; bila tool tidak ada, scanner terkait
-  dilewati dan dilaporkan sebagai *skipped*, bukan gagal.
-- `pilgrims` dan `ANF-Cyber-Shell` adalah **wrapper otomasi**: hasilnya
-  bergantung pada tool yang terpasang dan pada target yang diuji.
+- `log-anonymizer` needs third-party dependencies (`pandas`, `click`, `numpy`,
+  `scikit-learn`, `cryptography`, `fastapi`); its tests can only run after
+  `pip install -r requirements.txt` (tested in a separate venv).
+- `sec-scan-cli` invokes external tools; when a tool is missing, the relevant
+  scanner is skipped and reported as *skipped*, not as a failure.
+- `pilgrims` and `ANF-Cyber-Shell` are **automation wrappers**: results depend on
+  the tools installed and on the target being tested.
 
 ---
 
-## Struktur
+## Layout
 
 ```
 security-lab/
-├── seclab                  # dispatcher CLI
-├── runbook.md              # walkthrough sift + dockguard
-├── .gitleaks.toml          # allowlist sempit untuk contoh dokumentasi
+├── seclab                  # CLI dispatcher
+├── runbook.md              # sift + dockguard walkthrough
+├── .gitleaks.toml          # narrow allowlist for documentation examples
 ├── sift/                   # Go  — secret scanner
 ├── dockguard/              # Py  — Dockerfile linter
-├── log-anonymizer/         # Py  — anonimisasi log
-├── sec-scan-cli/           # Py  — orkestrasi scan CI/CD
-├── pilgrims/               # sh  — 20 modul pengujian
-├── anf-research-shell/     # zsh — workbench riset
-└── ANF-Cyber-Shell/        # zsh — workbench cyber-ops
+├── log-anonymizer/         # Py  — log anonymisation
+├── sec-scan-cli/           # Py  — CI/CD scan orchestration
+├── pilgrims/               # sh  — 20 testing modules
+├── anf-research-shell/     # zsh — research workbench
+└── ANF-Cyber-Shell/        # zsh — cyber-ops workbench
 ```
 
 ---
 
-## Etika, batasan, dan keamanan
+## Ethics, limits, and safety
 
-- **Izin tertulis wajib.** Recon/scan/eksploitasi hanya untuk aset sendiri atau
-  yang diizinkan secara tertulis. Dokumentasi ini tidak menganjurkan pengujian
-  tanpa izin.
-- **Lab-only.** Modul C2/eksploit/persistensi di `ANF-Cyber-Shell` dan
-  `pilgrims` ditujukan untuk lab terisolasi, bukan produksi.
-- **Bukan pengganti penilaian ahli.** Tool ini mengotomasi pemeriksaan yang
-  repetitif; keputusan keamanan tetap butuh manusia.
-- **Tanpa jaminan.** MIT, tanpa garansi apa pun (lihat [`LICENSE`](LICENSE)).
-- **Placeholder, bukan kredensial.** Nilai rahasia di dokumentasi/test adalah
-  contoh palsu. Jangan pernah commit kredensial nyata; `.gitleaks.toml`
-  sengaja dibuat sempit agar rahasia baru tetap terdeteksi.
-- **Melaporkan masalah keamanan:** lihat [`SECURITY.md`](SECURITY.md) (gunakan
-  GitHub Security Advisories, bukan issue publik).
+- **Written permission required.** Recon, scanning, and exploitation only against
+  your own assets or those you are authorised in writing to test. This
+  documentation does not endorse unauthorised testing.
+- **Lab-only.** The C2/exploit/persistence modules in `ANF-Cyber-Shell` and
+  `pilgrims` are intended for isolated labs, not production.
+- **Not a substitute for expert judgement.** These tools automate repetitive
+  checks; security decisions still require a human.
+- **No warranty.** MIT, without warranty of any kind (see [`LICENSE`](LICENSE)).
+- **Placeholders, not credentials.** Secret values in documentation/tests are fake
+  examples. Never commit real credentials; `.gitleaks.toml` is deliberately narrow
+  so that new secrets remain detectable.
+- **Reporting security issues:** see [`SECURITY.md`](SECURITY.md) (use GitHub
+  Security Advisories, not public issues).
 
-## Kontribusi
+## Contributing
 
-Lihat [`CONTRIBUTING.md`](CONTRIBUTING.md). Untuk perubahan besar, buka issue
-lebih dahulu agar arah perubahan disepakati.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md). For larger changes, open an issue first
+so the direction can be agreed on.
 
-## Lisensi
+## License
 
-MIT — lihat [`LICENSE`](LICENSE). Komponen yang membawa lisensinya sendiri
-tetap mengikuti lisensi di subfoldernya.
+MIT — see [`LICENSE`](LICENSE). Components that carry their own licence continue to
+follow the licence in their subfolder.
