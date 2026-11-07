@@ -1,24 +1,24 @@
-# NOTICE — Authorship & Attribusi
+# NOTICE — Authorship & Attribution
 
 **ANF Research Shell** (Integrated & Reproducible Research Workbench)
 
-## Penulis
-- **Afiq Andico Pangimpian** (Independent Researcher) — satu-satunya penulis.
+## Author
+- **Afiq Andico Pangimpian** (Independent Researcher) — sole author.
 
-## Pengembangan & AI disclosure
-- Seluruh kode (zsh, Python, shell), dokumentasi, eksperimen, dan artefak
-  reproducibility di repositori ini **ditulis dan dikerjakan sendiri oleh penulis**
-  dengan bantuan asisten AI (Hermes, model DeepSeek V4 Flash) sebagai alat
-  pengembangan — sesuai kebijakan AI disclosure pada README.
-- Tidak ada kode atau konten pihak ketiga yang disalin ke dalam repositori ini;
-  seluruh script inti, test, dan dokumentasi adalah karya penulis.
+## Development & AI disclosure
+- All code (zsh, Python, shell), documentation, experiments, and reproducibility
+  artifacts in this repository were **written and produced by the author**
+  with the assistance of an AI assistant (Hermes, model DeepSeek V4 Flash) as a
+  development tool — in accordance with the AI disclosure policy in the README.
+- No third-party code or content was copied into this repository;
+  all core scripts, tests, and documentation are the author's own work.
 
 ## Copyright
-- Kode dilisensikan **MIT** (lihat `LICENSE`). Karena seluruh konten ditulis
-  sendiri, tidak ada klaim hak cipta pihak ketiga atas materinya.
-- Data/dokumen riset: proposal CC-BY (menyusul bila diperlukan).
+- Code is licensed **MIT** (see `LICENSE`). Since all content was written
+  by the author, there are no third-party copyright claims over the material.
+- Research data/documents: proposed CC-BY (to follow if required).
 
-## Pernyataan kemandirian (standalone)
-- Repositori ini **berdiri sendiri**: untuk membangun dan memverifikasi seluruh
-  deliverable cukup `make setup` (venv + dependensi ter-pin) lalu `make verify`,
-  tanpa bergantung pada repositori, akun, atau jalur berkas di luar repositori.
+## Standalone statement
+- This repository is **self-contained**: to build and verify all
+  deliverables it is enough to run `make setup` (venv + pinned dependencies) then `make verify`,
+  without depending on repositories, accounts, or file paths outside the repository.

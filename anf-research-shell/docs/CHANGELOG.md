@@ -1,261 +1,261 @@
 # CHANGELOG — ANF Research Shell
 
-## Catatan Infra Reproducibility & Enterprise (2026-09-07, setelah v1.6.1)
-Tidak ada command/versi baru — infrastruktur reproducibility:
-- `make verify` / `make test` → **3 gate** (syntax `zsh -n`, 25 unit test deterministik, smoke launcher) — sama dengan isi `make verify` saat ini; hijau di GitHub Actions.
-- `make setup` + `requirements.txt` agregat ter-pin (xgboost 3.4.1, scikit-learn 1.9.0, psutil 7.2.2, scapy 2.7.0, torch 2.13.0+cpu [index CPU], scipy 1.18.0, numpy 2.5.2, matplotlib 3.11.1).
-- CI GitHub Actions: `.github/workflows/ci.yml` (push/PR → make verify; butuh repo di GitHub).
-- `LICENSE` MIT (kode) ditetapkan.
-- Scaffold eksperimen (`anf exp`) menghasilkan `seed.txt`/`env.txt`/`run.sh` per run.
-- Verifikasi aktual: 25/25 test lulus (deterministik, seed 42).
+## Reproducibility & Enterprise Infra Note (2026-09-07, after v1.6.1)
+No new commands/versions — reproducibility infrastructure:
+- `make verify` / `make test` → **3 gates** (syntax `zsh -n`, 25 deterministic unit tests, launcher smoke) — the same as the current `make verify` content; green in GitHub Actions.
+- `make setup` + aggregate pinned `requirements.txt` (xgboost 3.4.1, scikit-learn 1.9.0, psutil 7.2.2, scapy 2.7.0, torch 2.13.0+cpu [CPU index], scipy 1.18.0, numpy 2.5.2, matplotlib 3.11.1).
+- GitHub Actions CI: `.github/workflows/ci.yml` (push/PR → make verify; requires the repo on GitHub).
+- `LICENSE` MIT (code) set.
+- Experiment scaffold (`anf exp`) produces `seed.txt`/`env.txt`/`run.sh` per run.
+- Actual verification: 25/25 tests passed (deterministic, seed 42).
 
-## v1.6.1 (Cyber dipisah dari ANF — keputusan user 2026-09-07)
-**Tema: ANF bersih fokus research workbench. Modul operasional cyber dipindah ke arsip terpisah, bukan dihapus.**
+## v1.6.1 (Cyber split from ANF — user decision 2026-09-07)
+**Theme: a clean ANF focused on the research workbench. The operational cyber module was moved to a separate archive, not deleted.**
 
-### Perubahan
-- **53 fungsi operasional cyber dipindah** dari `code/anf_research_shell.zsh` ke
-  `~/Documents/Archive/ANF-cyber-modules-v1.6/anf_cyber_ops_*` (verbatim, tetap tersedia):
-  Recon (`scan`, `subdomains`, `dns`, `whois`, `amass`, `nikto`, dll), C2 framework
-  (`c2-start`, `c2-stop`, `c2-payload`, `c2-exfil`, dll), OSINT/exploit/defense
-  (`osint-email`, `autopwn`, `suricata`, `priv-esc`, `persist`, `honeypot`, dll),
+### Changes
+- **53 operational cyber functions moved** from `code/anf_research_shell.zsh` to
+  `~/Documents/Archive/ANF-cyber-modules-v1.6/anf_cyber_ops_*` (verbatim, still available):
+  Recon (`scan`, `subdomains`, `dns`, `whois`, `amass`, `nikto`, etc.), C2 framework
+  (`c2-start`, `c2-stop`, `c2-payload`, `c2-exfil`, etc.), OSINT/exploit/defense
+  (`osint-email`, `autopwn`, `suricata`, `priv-esc`, `persist`, `honeypot`, etc.),
   IP/targets ops, `matrix` (MITRE mapping).
-- **Script inti 119 → 64 fungsi** (3.085 → 2.414 baris).
-- **Pangkat akar dipotong semuanya**: 46 entri `_ANF_CMD_DESC`, alias `/cmd`, help
-  Core (`targets` dihapus), selftest (`check-ip`, tool nmap/subfinder → git/dig),
-  `doctor` tool list (tool cyber dibuang), komentar section.
-- **Metode riset dipertahankan**: `c2-entropy`, `c2-beacon-math`, `c2-ml-hunt`,
-  `c2-zscore`, `eval-*`, `guardfall-metrics`, `benchmark-guardfall` — materi
-  test_suite & paper, tidak dipromosikan sebagai cyber.
-- Backup utuh: `~/Documents/Archive/ANF-cyber-modules-v1.6/anf_research_shell_v1.6.0_FULL_local.zsh`
-  (per 2026-09-07 malam: arsip disimpan LOKAL di luar repo agar repo publik bersih dari modul cyber).
+- **Core script 119 → 64 functions** (3,085 → 2,414 lines).
+- **Root cleanup everywhere**: 46 `_ANF_CMD_DESC` entries, `/cmd` aliases, Core help
+  (`targets` removed), selftest (`check-ip`, nmap/subfinder tools → git/dig),
+  `doctor` tool list (cyber tools dropped), section comments.
+- **Research methods retained**: `c2-entropy`, `c2-beacon-math`, `c2-ml-hunt`,
+  `c2-zscore`, `eval-*`, `guardfall-metrics`, `benchmark-guardfall` — material for
+  test_suite & papers, not promoted as cyber.
+- Full backup: `~/Documents/Archive/ANF-cyber-modules-v1.6/anf_research_shell_v1.6.0_FULL_local.zsh`
+  (as of the evening of 2026-09-07: the archive is stored LOCALLY outside the repo so the public repo stays free of cyber modules).
 
-### Verifikasi v1.6.1 (semua lewat launcher `bin/anf`)
-- `zsh -n` → SYNTAX OK (file final 2.414 baris)
+### v1.6.1 Verification (all via the `bin/anf` launcher)
+- `zsh -n` → SYNTAX OK (final file 2,414 lines)
 - `test_suite.py` → 25/25 pass
-- `bin/anf hash abc` → MD5 `90015098...` (deterministik)
-- `bin/anf mlbench 200` → F1 entropy 1.0000 (output valid)
+- `bin/anf hash abc` → MD5 `90015098...` (deterministic)
+- `bin/anf mlbench 200` → entropy F1 1.0000 (valid output)
 - `anf_selftest` → PASS 15, FAIL 0
-- help → 6 ranah, 0 residu cyber
+- help → 6 domains, 0 cyber residue
 
 ---
 
-## v1.6.0 (Fokus Research — cyber dihilangkan dari promosi, 2026-09-06)
-**Tema: mengerucut & fungsional. ANF = workbench riset (science/math/CS), bukan tool cyber.**
+## v1.6.0 (Research Focus — cyber removed from promotion, 2026-09-06)
+**Theme: converge & be functional. ANF = research workbench (science/math/CS), not a cyber tool.**
 
-### Perubahan (menjawab user: "hilangkan saja cyber biar fokus lainnnya")
-- **Help 20 kategori → 6 ranah besar**: Core, Utilities, Research & Math, ML/DL/Eval, Workbench & AI, Auto-Provisioning. Kategori cyber (Recon, Exploitation, OSINT, C2 Framework, Defense, Post-Exploitation, Network&OPSEC) dihapus dari promosi.
-- **Banner** tanpa baris Cyber/Purple-Team → Science&Math / ML-DL-Research / Researcher tools / One-terminal.
-- **`/why`** tanpa baris cyber; positioning: peneliti science/math/computer science.
-- **README** positioning disamakan (tanpa cyber).
-- **Konservatif**: fungsi cyber TIDAK dihapus — tetap bisa dipanggil manual (mis. `anf matrix`) untuk keperluan historis; hanya tidak dipromosikan.
+### Changes (responding to the user: "just remove the cyber so it focuses on other things")
+- **Help 20 categories → 6 large domains**: Core, Utilities, Research & Math, ML/DL/Eval, Workbench & AI, Auto-Provisioning. Cyber categories (Recon, Exploitation, OSINT, C2 Framework, Defense, Post-Exploitation, Network&OPSEC) removed from promotion.
+- **Banner** without the Cyber/Purple-Team line → Science&Math / ML-DL-Research / Researcher tools / One-terminal.
+- **`/why`** without the cyber line; positioning: science/math/computer-science researchers.
+- **README** positioning aligned (without cyber).
+- **Conservative**: cyber functions were NOT deleted — they can still be called manually (e.g. `anf matrix`) for historical purposes; they are simply not promoted.
 
-### Verifikasi v1.6.0 (ad-hoc, mktemp)
+### v1.6.0 Verification (ad-hoc, mktemp)
 - `zsh -n` → SYNTAX OK
-- help → 6 ranah tampil; 0 kategori cyber tersisa di help ✅
-- banner & `/why` → tidak memuat "cyber" ✅
-- Regresi: test_suite 25/25, calc, sym, csv error handling ramah, ensure ✅
-- Konservatif: `anf matrix` masih bisa dipanggil ✅
+- help → 6 domains shown; 0 cyber categories left in help ✅
+- banner & `/why` → do not contain "cyber" ✅
+- Regression: test_suite 25/25, calc, sym, csv friendly error handling, ensure ✅
+- Conservative: `anf matrix` can still be called ✅
 
 ---
 
-## v1.5.1 (Refokus Positioning — Integrated & Reproducible Research Workbench, 2026-09-06)
-**Tema: rapikan & fokus satu cerita kuat, bukan 5 pilar serba tanggung.**
+## v1.5.1 (Positioning Refocus — Integrated & Reproducible Research Workbench, 2026-09-06)
+**Theme: tidy up & focus on one strong story, not 5 half-hearted pillars.**
 
-### Perubahan (menjawab arah user: "pangkas & refokus, positioning tunggal")
-- **Positioning tunggal**: "Integrated & Reproducible Research Workbench" — semua pekerjaan peneliti (science, math, CS, cyber) dalam satu terminal yang reproducible. Menggantikan banner/why multi-pilar yang terpecah.
-- **Versi diselaraskan**: `ANF_VERSION` 1.0.0 → **1.5.0** (sebelumnya kode bilang 1.0.0 padahal fitur sudah v1.5 — inkonsistensi diperbaiki).
-- **Banner** di-refocus: 4 baris koheren (Science&Math / ML-DL-Research / Cyber-PurpleTeam / One-terminal + /ensure), bukan kolase fitur acak.
-- **`/why`** = ringkasan positioning + pemetaan command per ranah + janji "terukur & tertelusur".
-- **README & manifest** disamakan ke satu cerita.
+### Changes (responding to the user's direction: "trim & refocus, single positioning")
+- **Single positioning**: "Integrated & Reproducible Research Workbench" — all the researcher's work (science, math, CS, cyber) in one reproducible terminal. Replaces the fragmented multi-pillar banner/why.
+- **Version aligned**: `ANF_VERSION` 1.0.0 → **1.5.0** (previously the code said 1.0.0 although features were already v1.5 — inconsistency fixed).
+- **Banner** refocused: 4 coherent lines (Science&Math / ML-DL-Research / Cyber-PurpleTeam / One-terminal + /ensure), not a random feature collage.
+- **`/why`** = positioning summary + command mapping per domain + the promise "measurable & traceable".
+- **README & manifest** aligned to one story.
 
-### Verifikasi v1.5.1 (ad-hoc, mktemp)
+### v1.5.1 Verification (ad-hoc, mktemp)
 - `zsh -n` → SYNTAX OK; `anf version` → 1.5.0
 - Banner → v1.5.0 + "Integrated & Reproducible Research Workbench" ✅
 - `/why` → headline + Positioning ✅
-- Regresi: test_suite 25/25, encode hello, calc, sym, mlinfo, ensure, matrix ✅
-- (Catatan: 1 "FAIL" pada run pertama terbukti bug test — case-sensitive grep "positioning" vs "Positioning"; kode benar.)
+- Regression: test_suite 25/25, encode hello, calc, sym, mlinfo, ensure, matrix ✅
+- (Note: the 1 "FAIL" on the first run turned out to be a test bug — case-sensitive grep "positioning" vs "Positioning"; the code was correct.)
 
 ---
 
 ## v1.5.0 (Researcher Workflow + Auto-Provisioning, 2026-09-06)
-**Tema: semua kebutuhan peneliti yang dikerjakan via terminal + tool otomatis ter-install.**
+**Theme: every researcher need handled via the terminal + tools installed automatically.**
 
-### Fitur baru (Section 15 — Researcher Workflow; Section 16 — Auto-Provisioning)
-| Command | Fungsi | Ranah |
+### New features (Section 15 — Researcher Workflow; Section 16 — Auto-Provisioning)
+| Command | Function | Domain |
 |---|---|---|
-| `/plot` | Visualisasi data (hist/scatter/line) → PNG ke research/outputs (matplotlib) | Science |
-| `/calc` | Kalkulator ilmiah (sqrt, trigonometri, pangkat) | Math |
-| `/sym` | Matematika simbolik sympy: integrate/diff/simplify/limit/solve/series | Math |
-| `/sha` | Checksum sha256 utk reproducibility manifest | Research |
-| `/exp` | Scaffold eksperimen reproducible: folder + seed.txt + env.txt + run.sh | Research |
-| `/csv` | Data wrangling CSV via pandas: head/summary/cols | Science |
-| `/bib` | Validasi bibliografi .bib: count/duplikat/tipe/baris mencurigakan | Research/writing |
-| `/ensure` | **Auto-provisioning**: cek tool wajib + auto-install yang belum ada (Linux apt/pacman/dnf; brew fallback) | DevOps |
+| `/plot` | Data visualization (hist/scatter/line) → PNG to research/outputs (matplotlib) | Science |
+| `/calc` | Scientific calculator (sqrt, trigonometry, powers) | Math |
+| `/sym` | sympy symbolic mathematics: integrate/diff/simplify/limit/solve/series | Math |
+| `/sha` | sha256 checksum for the reproducibility manifest | Research |
+| `/exp` | Reproducible experiment scaffold: folder + seed.txt + env.txt + run.sh | Research |
+| `/csv` | CSV data wrangling via pandas: head/summary/cols | Science |
+| `/bib` | .bib bibliography validation: count/duplicates/type/suspicious lines | Research/writing |
+| `/ensure` | **Auto-provisioning**: check required tools + auto-install missing ones (Linux apt/pacman/dnf; brew fallback) | DevOps |
 
-### Verifikasi v1.5.0 (ad-hoc, mktemp)
-- `zsh -n` → SYNTAX OK; total fungsi **119**; 3081 baris
-- `test_suite.py` → **25/25**; alias 8/8; encode OK
+### v1.5.0 Verification (ad-hoc, mktemp)
+- `zsh -n` → SYNTAX OK; total functions **119**; 3081 lines
+- `test_suite.py` → **25/25**; aliases 8/8; encode OK
 - `/calc` → sqrt(144)=12, sin(pi/6)=0.5
 - `/sym` → integrate=x³/3, simplify=x+1, limit=1, solve=[-2,2], diff=exp(x)(sin x+cos x)
-- `/sha` → 64 hex; `/exp` → 3 file scaffold; `/csv` → baris=3; `/bib` → 2 entries
-- `/ensure doctor` → deteksi apt + tool belum ada (dry, tanpa install)
-- `/plot` → PNG ke research/outputs
+- `/sha` → 64 hex; `/exp` → 3 scaffold files; `/csv` → rows=3; `/bib` → 2 entries
+- `/ensure doctor` → detects apt + missing tools (dry, without installing)
+- `/plot` → PNG to research/outputs
 
-### Bug fix dalam iterasi
-- Glitch merge: `unset _cmd _func# ===` (newline hilang antar section) → fix
-- sympy: `sp.sstr(r, pretty_print=False)` → `sp.sstr(r)` (API baru); inject sin/cos/exp/log/limit ke namespace
-- Display `/ensure`: `, wait:wajib` → `[wajib]`
+### Bug fixes within the iteration
+- Merge glitch: `unset _cmd _func# ===` (missing newline between sections) → fixed
+- sympy: `sp.sstr(r, pretty_print=False)` → `sp.sstr(r)` (new API); inject sin/cos/exp/log/limit into the namespace
+- `/ensure` display: `, wait:wajib` → `[wajib]`
 
-### Catatan auto-install (jawaban pertanyaan user)
-**Bisa.** `/ensure doctor` cek; `/ensure all` auto-install via package manager Linux (apt/dnf/pacman) dengan konfirmasi sudo. Aman karena: (1) mode doctor kering default, (2) selalu konfirmasi sebelum install, (3) fokus Linux dulu untuk stabilitas.
+### Auto-install note (answering the user's question)
+**Yes.** `/ensure doctor` checks; `/ensure all` auto-installs via the Linux package manager (apt/dnf/pacman) with sudo confirmation. Safe because: (1) doctor mode is dry by default, (2) always confirms before installing, (3) Linux first for stability.
 
 ---
 
-## v1.4.0 (Researcher Workflow — batch 1) — digabung ke v1.5.0 di atas (satu commit)
-*(v1.4 marker disimpan di git history; changelog dirangkum di v1.5.0.)*
+## v1.4.0 (Researcher Workflow — batch 1) — merged into v1.5.0 above (single commit)
+*(the v1.4 marker is kept in git history; the changelog is summarized in v1.5.0.)*
 
-## v1.3.0 (Research Suite — untuk peneliti science/math/CS/cyber, 2026-09-06)
-**Tema: mempermudah SEMUA pekerjaan peneliti dalam satu terminal — riset, math, ML, DL, cyber.**
+## v1.3.0 (Research Suite — for science/math/CS/cyber researchers, 2026-09-06)
+**Theme: make ALL the researcher's work easier in one terminal — research, math, ML, DL, cyber.**
 
-### Fitur baru (Section 14 — Research Suite)
-| Command | Fungsi | Ranah |
+### New features (Section 14 — Research Suite)
+| Command | Function | Domain |
 |---|---|---|
-| `/mlinfo` | Cek stack ML/DL: python/numpy/sklearn/torch + CUDA, jujur flag CPU | ML/DL |
-| `/stat` | Statistik dataset numerik: n/min/max/mean/median/std/entropy | Math |
-| `/mlbench` | Benchmark deterministik (seed=42): entropy-baseline vs IsolationForest → CSV ke research/outputs | ML/research |
-| `/dlcheck` | Smoke test DL CPU: matmul (quick) / mini-MLP 3 epoch (full), deterministic | DL |
-| `/matrix` | Mapping command ANF ke MITRE ATT&CK tactics (+ filter per tactic) | Cyber |
-| `/dataset` | Registry dataset riset (add/list, persist ke `~/.cache/anf/datasets.tsv`) | Research |
-| `/paperstat` | Statistik manuskrip (kata/baris/ref/ukuran) | Research |
+| `/mlinfo` | Check the ML/DL stack: python/numpy/sklearn/torch + CUDA, honest CPU flag | ML/DL |
+| `/stat` | Numeric dataset statistics: n/min/max/mean/median/std/entropy | Math |
+| `/mlbench` | Deterministic benchmark (seed=42): entropy-baseline vs IsolationForest → CSV to research/outputs | ML/research |
+| `/dlcheck` | DL CPU smoke test: matmul (quick) / 3-epoch mini-MLP (full), deterministic | DL |
+| `/matrix` | Map ANF commands to MITRE ATT&CK tactics (+ filter per tactic) | Cyber |
+| `/dataset` | Research dataset registry (add/list, persist to `~/.cache/anf/datasets.tsv`) | Research |
+| `/paperstat` | Manuscript statistics (words/lines/refs/size) | Research |
 
-### Verifikasi v1.3.0 (ad-hoc, mktemp, exit 0)
-- `zsh -n` → SYNTAX OK; total fungsi **111**
-- `test_suite.py` → **25/25** (regresi)
-- Alias 7/7, help kategori **Research Suite** tampil
-- `/mlinfo` → sklearn 1.9.0, torch 2.13.0+cu130 cuda=False (jujur CPU-only)
+### v1.3.0 Verification (ad-hoc, mktemp, exit 0)
+- `zsh -n` → SYNTAX OK; total functions **111**
+- `test_suite.py` → **25/25** (regression)
+- Aliases 7/7, help category **Research Suite** shown
+- `/mlinfo` → sklearn 1.9.0, torch 2.13.0+cu130 cuda=False (honestly CPU-only)
 - `/stat` → mean=3, std=1.58114, entropy=2.32 bits (data 1..5)
-- `/mlbench 400` → entropy-baseline F1=1.0, isolation-forest F1=0.205; CSV deterministik ke research/outputs
-- `/dlcheck` quick → matmul shape 4x4; full → 3 epoch, loss turun, OK
-- `/matrix` → C2/Recon/Defense tactics + filter reconnaissance
-- `/dataset` add+list persist; header TSV tepat sekali
-- `/paperstat` → kata/baris manuskrip
+- `/mlbench 400` → entropy-baseline F1=1.0, isolation-forest F1=0.205; deterministic CSV to research/outputs
+- `/dlcheck` quick → matmul shape 4x4; full → 3 epochs, loss decreasing, OK
+- `/matrix` → C2/Recon/Defense tactics + reconnaissance filter
+- `/dataset` add+list persist; TSV header exactly once
+- `/paperstat` → manuscript words/lines
 
-### Bug fix dalam iterasi
+### Bug fixes within the iteration
 - `ANF_RESEARCH_DIR: parameter not set` → default `${ANF_RESEARCH_DIR:-$HOME/.../research/outputs}`
-- **PITFALL zsh kritis:** `local path=...` di dalam fungsi menimpa `$PATH` (zsh tie array `path`↔PATH) → semua command not found (`dirname`/`mkdir`/`mv`/`date`). Fix: rename ke `pth`.
-- `/dataset` header dobel → tulis header hanya jika file baru.
+- **Critical zsh PITFALL:** `local path=...` inside a function overrides `$PATH` (zsh tie array `path`↔PATH) → all commands not found (`dirname`/`mkdir`/`mv`/`date`). Fix: rename to `pth`.
+- `/dataset` double header → write the header only if the file is new.
 
 ---
 
 ## v1.2.1 (Focus Value Proposition, 2026-09-06)
-**Tema: mempertegas identitas — bukan shell tandingan, tapi cockpit riset keamanan.**
+**Theme: sharpen the identity — not a rival shell, but a security research cockpit.**
 
-### Perubahan
-- Command `/why` — value proposition ringkas (3 pilar: reproducible research, purple-team ops, AI-assisted).
-- Banner fokus identitas: "Security-Research Cockpit │ Reproducible │ AI-assisted │ Purple-Team".
-- README positioning ditulis eksplisit.
+### Changes
+- `/why` command — concise value proposition (3 pillars: reproducible research, purple-team ops, AI-assisted).
+- Identity-focused banner: "Security-Research Cockpit │ Reproducible │ AI-assisted │ Purple-Team".
+- README positioning written explicitly.
 
-### Verifikasi v1.2.1
-- `/why` → tagline + 3 pilar tampil; alias `/why`→`anf_why`; help Enterprise memuat why.
-- Regresi baseline tetap hijau (syntax, 25/25, encode).
+### v1.2.1 Verification
+- `/why` → tagline + 3 pillars shown; alias `/why`→`anf_why`; Enterprise help contains why.
+- Baseline regression still green (syntax, 25/25, encode).
 
 ---
 
-## v1.2.0 (Fitur Enterprise — 6 command berdampak besar, 2026-09-06)
-**Tema: menambah fungsionalitas seimbang lintas ranah untuk membantu semua pekerjaan.**
+## v1.2.0 (Enterprise Features — 6 high-impact commands, 2026-09-06)
+**Theme: add balanced functionality across domains to help all work.**
 
-### Fitur baru (Section 13 — Enterprise)
-| Command | Fungsi | Ranah |
+### New features (Section 13 — Enterprise)
+| Command | Function | Domain |
 |---|---|---|
-| `/gen` | AI-assisted code generation (panggil hermes/opencode, tanpa AI → pesan jelas) | Coding |
-| `/task` | Orchestrator task di **tmux latar** — survive restart; `start/list/attach/kill` | Otomasi/riset |
-| `/q` | Pencarian cepat grep dalam project (skip .git/node_modules/venv) | Produktivitas |
-| `/gitx` | Git quick-ops harian: `s/a/c/l/b/p/d/x` | Git |
-| `/envcard` | Ringkasan env & tools sekali lihat (OS/uptime/disk/mem/tools) | Monitoring |
+| `/gen` | AI-assisted code generation (calls hermes/opencode, without AI → clear message) | Coding |
+| `/task` | Task orchestrator in **background tmux** — survives restart; `start/list/attach/kill` | Automation/research |
+| `/q` | Quick grep search within the project (skips .git/node_modules/venv) | Productivity |
+| `/gitx` | Daily git quick-ops: `s/a/c/l/b/p/d/x` | Git |
+| `/envcard` | Env & tools summary at a glance (OS/uptime/disk/mem/tools) | Monitoring |
 | `/mvp` | Multi-version & branch mgmt: `tag/v/b/s/l` | Git/versioning |
 
-### Verifikasi v1.2.0 (ad-hoc, mktemp)
+### v1.2.0 Verification (ad-hoc, mktemp)
 - `zsh -n` → SYNTAX OK
-- `test_suite.py` → **25/25** (regresi baseline hijau)
-- Alias `/gen /task /q /gitx /envcard /mvp` → semua terdaftar ✅
-- `/envcard` → sections OS/Disk/Mem + tools (git/tmux/docker/python3/node/hermes/opencode) ✅
-- `/q` → grep keluar match ✅
-- `/gitx s` → status git ✅
+- `test_suite.py` → **25/25** (baseline regression green)
+- Aliases `/gen /task /q /gitx /envcard /mvp` → all registered ✅
+- `/envcard` → OS/Disk/Mem sections + tools (git/tmux/docker/python3/node/hermes/opencode) ✅
+- `/q` → grep returns matches ✅
+- `/gitx s` → git status ✅
 - `/task` tmux lifecycle: start+list+kill ✅ (survive restart confirmed)
 - `/mvp v` → `ANF_VERSION=1.0.0` ✅
-- `help` → kategori **Enterprise** tampil ✅
-- Total fungsi: 97 → **103**
+- `help` → **Enterprise** category shown ✅
+- Total functions: 97 → **103**
 
 ### Footnotes
-- Ke-6 command dipilih dari preferensi user (seimbang, dampak besar, bukan 20-an).
-- `gen`&`task`&`gitx`&`q`&`envcard`&`mvp` tersedia via launcher `anf <cmd>` NON-interaktif juga.
+- The 6 commands were chosen from user preference (balanced, high impact, not 20-odd).
+- `gen`&`task`&`gitx`&`q`&`envcard`&`mvp` are also available via the NON-interactive `anf <cmd>` launcher.
 
 ---
 
-## v1.0.0 (Rebrand Enterprise + Research, 2026-09-06)
-**Tema: ANF → ANF Research Shell. Struktur enterprise + fondasi penelitian.**
+## v1.0.0 (Enterprise + Research Rebrand, 2026-09-06)
+**Theme: ANF → ANF Research Shell. Enterprise structure + research foundation.**
 
-### Perubahan utama
-- **Rebrand total:** semua identifier `anf`/`ANF`/`_af_`/`_AF_` → `anf`/`ANF`/`_anf_`/`_ANF_` (manual, terverifikasi 0 leftover). Versi reset ke `1.0.0`.
-- **Struktur enterprise/research baru** di `~/Documents/ANF-Research-Shell/`:
-  - `code/` — script inti + test + `anfrc.dist` (template config)
-  - `bin/anf` — **launcher CLI**: `anf <cmd> [args]` (command tunggal) atau `anf` (shell interaktif)
-  - `research/` — output eksperimen (runtime, tidak di-commit)
+### Main changes
+- **Total rebrand:** all `anf`/`ANF`/`_af_`/`_AF_` identifiers → `anf`/`ANF`/`_anf_`/`_ANF_` (manual, verified 0 leftover). Version reset to `1.0.0`.
+- **New enterprise/research structure** at `~/Documents/ANF-Research-Shell/`:
+  - `code/` — core script + tests + `anfrc.dist` (config template)
+  - `bin/anf` — **CLI launcher**: `anf <cmd> [args]` (single command) or `anf` (interactive shell)
+  - `research/` — experiment output (runtime, not committed)
   - `docs/`, `server/`, `packages/`
-  - `install.sh` — installer enterprise (install launcher + script inti + config)
-- **Launcher `bin/anf`** dengan resolusi lokasi berlapis (env `ANF_LIB` → lokasi install → project) → portabel/self-contained.
-- **Config** `anfrc.dist` (prefix `ANF_`), dibaca saat launch.
-- **README akademik** + baseline yang dapat diverifikasi ulang.
+  - `install.sh` — enterprise installer (installs launcher + core script + config)
+- **`bin/anf` launcher** with layered location resolution (env `ANF_LIB` → install location → project) → portable/self-contained.
+- **Config** `anfrc.dist` (prefix `ANF_`), read at launch.
+- **Academic README** + a re-verifiable baseline.
 
-### Verifikasi v1.0.0
+### v1.0.0 Verification
 - `zsh -n code/anf_research_shell.zsh` → **SYNTAX OK**
 - `python3 code/test_suite.py` → **25/25 (100%)**
 - `bin/anf encode hello` → `aGVsbG8=` (base64) ✅
 - `bin/anf hash abc` → MD5 `90015098...`, SHA256 `ba7816bf...` ✅
-- `bin/anf version` / `status` / `help` → jalan dari launcher ✅
-- Alias pasca-source: `/help`→`anf_help`, `/status`→`anf_status`, `/c2-start`→`anf_c2_start` ✅
-- Install portabel ke `/tmp/anf-install-test/` → `anf version` jalan (self-contained) ✅
-- `.zshrc` di-update → `source ~/Documents/ANF-Research-Shell/code/anf_research_shell.zsh`
+- `bin/anf version` / `status` / `help` → run from the launcher ✅
+- Post-source aliases: `/help`→`anf_help`, `/status`→`anf_status`, `/c2-start`→`anf_c2_start` ✅
+- Portable install to `/tmp/anf-install-test/` → `anf version` runs (self-contained) ✅
+- `.zshrc` updated → `source ~/Documents/ANF-Research-Shell/code/anf_research_shell.zsh`
 
 ### Footnote
-- Folder lama `.../zsh project/` dipertahankan (jejak v15 + archive). Tidak dihapus.
-- Cache dir otomatis pindah ke `~/.cache/anf/` (rename var `ANF_CACHE_DIR`).
-- TODO: inisialisasi git + tag, lisensi, CI, eksperimen paper §5.
+- The old `.../zsh project/` folder is retained (v15 + archive traces). Not deleted.
+- Cache dir automatically moves to `~/.cache/anf/` (var renamed `ANF_CACHE_DIR`).
+- TODO: git init + tag, license, CI, paper §5 experiment.
 
 ---
 
-## v15.0.1-RESEARCH (Hotfix /help + popup) — history pra-rebrand
+## v15.0.1-RESEARCH (Hotfix /help + popup) — pre-rebrand history
 
-### Bug Fixes (2026-09-06, setelah restart laptop)
+### Bug Fixes (2026-09-06, after a laptop restart)
 
-| ID | Lokasi | Problem | Fix |
+| ID | Location | Problem | Fix |
 |----|--------|---------|-----|
-| FIX-ALIAS-ORDER | Section 10, loop alias `/cmd` (baris ~1973) | Loop pembuat alias berjalan **sebelum** `anf_help` didefinisikan (baris ~1980) → alias `/help` tidak pernah terbuat; `/help` error `zsh: no such file or directory: /help` padahal `/status` dll jalan | Pindahkan loop alias ke **setelah** fungsi `anf_help` (sebelum Section 11). Kini semua 97 fungsi command sudah ada saat alias dibuat |
-| FIX-POPUP-NL | Section 11, `_af_popup_render` | Baris header `' matches ─╮\n'` pakai single-quote biasa → `\n` ditampilkan **literal** (bukan newline); begitu juga `out+="│ ...\\n"` di double-quote → `\n` literal | Ganti ke `$'...'` (ANSI-C quoting) di header dan `"...\"$'\n'` di tiap baris match → newline asli |
+| FIX-ALIAS-ORDER | Section 10, `/cmd` alias loop (line ~1973) | The alias-creating loop ran **before** `anf_help` was defined (line ~1980) → the `/help` alias was never created; `/help` failed with `zsh: no such file or directory: /help` even though `/status` etc. worked | Move the alias loop to **after** the `anf_help` function (before Section 11). Now all 97 command functions exist when aliases are created |
+| FIX-POPUP-NL | Section 11, `_af_popup_render` | The header line `' matches ─╮\n'` used plain single quotes → `\n` was displayed **literally** (not as a newline); likewise `out+="│ ...\\n"` in double quotes → literal `\n` | Switch to `$'...'` (ANSI-C quoting) in the header and `"...\"$'\n'` on each match line → real newlines |
 
-### Verifikasi v15.0.1
+### v15.0.1 Verification
 - `zsh -n anf_v15.zsh` → **SYNTAX_OK**
-- Source di subshell → alias `/help -> anf_help`, `/status -> anf_status`, `/scan -> anf_scan` ✅
-- Unit-render popup (`cat -A`): tidak ada literal `\n`, newline asli di tiap baris ✅
+- Sourced in a subshell → aliases `/help -> anf_help`, `/status -> anf_status`, `/scan -> anf_scan` ✅
+- Popup render unit check (`cat -A`): no literal `\n`, real newlines on each line ✅
 - `test_suite.py` → **25/25 passed (100%)**
 
 ---
 
 ## v15.0.0-RESEARCH (Merge v12.8.7-FINAL → v14.0.0-RESEARCH)
-**Tema: Unifikasi — Base v14 (riset/hardening) + Fitur Operasional v12**
+**Theme: Unification — v14 Base (research/hardening) + v12 Operational Features**
 
-### Strategi Merge (2026-09-06)
-- **Base = v14.0.0-RESEARCH** (semua hardening dipertahankan):
-  - C2 server v14 (subprocess.run + shlex + sandbox) — TIDAK ditimpa server v12
-  - `panic` non-destruktif (`unset HISTFILE` + `fc -p /dev/null`) — TIDAK ditimpa
-  - `suricata` if/else fix (parse error) — TIDAK ditimpa
-  - ZLE popup if/else, hash tanpa eval, eval framework, GuardFall v2 metrics
-- **+61 fungsi v12** yang hilang di v14 (file `anf_v12.8.7-FINAL.zsh` diarsipkan)
-- **3 override** (v12 lebih kaya, definisi terakhir menang): `autopwn` (nmap+msf+nuclei), `osint_email` (+hunter.io), `sysinfo` (laporan laptop lengkap)
-- **Skip** bare-name wrappers v12 (`function katana/nuclei/ffuf/...`) — risiko shadowing binary
+### Merge Strategy (2026-09-06)
+- **Base = v14.0.0-RESEARCH** (all hardening retained):
+  - v14 C2 server (subprocess.run + shlex + sandbox) — NOT overwritten by the v12 server
+  - non-destructive `panic` (`unset HISTFILE` + `fc -p /dev/null`) — NOT overwritten
+  - `suricata` if/else fix (parse error) — NOT overwritten
+  - ZLE popup if/else, hash without eval, eval framework, GuardFall v2 metrics
+- **+61 v12 functions** missing in v14 (file `anf_v12.8.7-FINAL.zsh` archived)
+- **3 overrides** (v12 richer, last definition wins): `autopwn` (nmap+msf+nuclei), `osint_email` (+hunter.io), `sysinfo` (full laptop report)
+- **Skip** v12 bare-name wrappers (`function katana/nuclei/ffuf/...`) — binary shadowing risk
 
-### Fitur Baru dari v12 (61 fungsi)
-| Kategori | Fungsi |
+### New Features from v12 (61 functions)
+| Category | Functions |
 |----------|--------|
 | IP cache | `check-ip`, `clear-ip`, `cached_ip` |
 | Targets | `targets add/list/remove/clear` |
@@ -266,89 +266,89 @@ Tidak ada command/versi baru — infrastruktur reproducibility:
 | Utils | `uuid`, `random`, `epoch`, `clip` |
 | Tools | `amass`, `gobuster`, `nikto`, `whatweb` |
 | Integrations | `hermes`, `hermes-locate`, `hermes-set`, `github` |
-| C2 ops | `c2-payload`, `c2-interact`, `c2-exfil`, `c2-decode` (server v14 tetap) |
+| C2 ops | `c2-payload`, `c2-interact`, `c2-exfil`, `c2-decode` (v14 server retained) |
 | OSINT | `osint-phone`, `cloud-enum`, `wayback` |
 | Exploit | `priv-esc`, `password-spray` |
 | Pivot | `pivot-socks`, `port-forward`, `ssh-tunnel` |
 | Defense | `honeypot`, `wazuh-agent` |
 | Post-exploit | `persist`, `credentials`, `screenshot-all`, `clear-logs` |
-| Lainnya | `playbook`, `ai-assist`, `ai-log` |
+| Others | `playbook`, `ai-assist`, `ai-log` |
 
-### Verifikasi v15
+### v15 Verification
 - `zsh -n anf_v15.zsh` → SYNTAX_OK
 - Source OK — `ANF_VERSION=15.0.0-RESEARCH`
-- `test_suite.py` → 25/25 (tetap hijau, tak tersentuh)
-- Selftest → **16/16 PASS** (termasuk check-ip network)
-- Duplikat fungsi: hanya 3 override yang disengaja (autopwn/osint_email/sysinfo); tidak ada duplikat tak-sengaja; `function katana/nuclei/...` = 0
-- Help 16 kategori menampilkan command baru
+- `test_suite.py` → 25/25 (still green, untouched)
+- Selftest → **16/16 PASS** (including the check-ip network test)
+- Duplicate functions: only the 3 intentional overrides (autopwn/osint_email/sysinfo); no unintentional duplicates; `function katana/nuclei/...` = 0
+- Help with 16 categories shows the new commands
 
 ---
 
 ## v14.1.0-RESEARCH (Audit)
-**Tema: Bug Fixes + Verifikasi Baseline**
+**Theme: Bug Fixes + Baseline Verification**
 
 ### Bug Fixes (Audit 2026-09-06)
 
-| ID | Lokasi | Problem | Fix |
+| ID | Location | Problem | Fix |
 |----|--------|---------|-----|
-| FIX-PARSE | Section 12, `anf_suricata` | `command -v ... && sudo suricata ... & \` lalu `\|\|` → **parse error zsh** (`zsh -n` gagal di baris 1300), script tidak bisa di-source | Refactor ke `if command -v; then ... & else ...; fi` — background hanya di command, chain `\|\|` dipisah |
-| FIX-REPRO | `test_suite.py` Isolation Forest | Klaim "seed=42 hasilkan nilai sama" tapi dua run memakai state random awal berbeda → F1 beda (0.75 vs 0.70), **bukan test reproducibility yang valid** | Ganti jadi invariant test benar: dua run dengan `random.seed(42)` di-reset sebelum masing-masing `fit()` → prediksi harus identik (`preds_r1 == preds_r2`) |
+| FIX-PARSE | Section 12, `anf_suricata` | `command -v ... && sudo suricata ... & \` then `\|\|` → **zsh parse error** (`zsh -n` failed at line 1300), the script could not be sourced | Refactor to `if command -v; then ... & else ...; fi` — background only on the command, the `\|\|` chain split out |
+| FIX-REPRO | `test_suite.py` Isolation Forest | Claimed "seed=42 produces the same values" but the two runs used different initial random states → different F1 (0.75 vs 0.70), **not a valid reproducibility test** | Replace with a correct invariant test: two runs with `random.seed(42)` reset before each `fit()` → predictions must be identical (`preds_r1 == preds_r2`) |
 
-### Verifikasi Baseline
-- `zsh -n anf_v14.zsh` → **SYNTAX_OK** (sebelum fix = parse error baris 1300)
-- `source` script di subshell → OK, `/help` exit 0
-- `test_suite.py` → **25/25 passed (100%)** (sebelumnya 24/24 — +1 test reproducibility baru)
-- Smoke test runtime: `encode`/`decode`/`hash`/`status` semua benar (MD5 abc, SHA256 ba7816...)
-- Audit konsistensi: 36 fungsi publik ↔ 34 slash command, semua mapping valid; `panic` non-destruktif (unset HISTFILE), `c2_start` subprocess.run+shlex+sandbox, ZLE popup if/else benar
+### Baseline Verification
+- `zsh -n anf_v14.zsh` → **SYNTAX_OK** (before the fix = parse error line 1300)
+- `source` the script in a subshell → OK, `/help` exit 0
+- `test_suite.py` → **25/25 passed (100%)** (previously 24/24 — +1 new reproducibility test)
+- Runtime smoke test: `encode`/`decode`/`hash`/`status` all correct (MD5 abc, SHA256 ba7816...)
+- Consistency audit: 36 public functions ↔ 34 slash commands, all mappings valid; `panic` non-destructive (unset HISTFILE), `c2_start` subprocess.run+shlex+sandbox, ZLE popup if/else correct
 
 ---
 
 ## v14.0.0-RESEARCH (Current)
 
-### Bug Fixes (Kritis)
+### Bug Fixes (Critical)
 
-| ID | Lokasi | Problem v13 | Fix v14 |
+| ID | Location | Problem v13 | Fix v14 |
 |----|--------|-------------|---------|
 | FIX-C2 | Section 6, `server.py` | `os.popen(cmd).read()` — shell injection, no timeout | `subprocess.run()` + `shlex.split()` + timeout=15s + sandbox CWD |
-| FIX-GF | Section 3, `_af_canonicalize_command` | `${IFS}` variant tidak terdeteksi | Tambah `${IFS}`, `${IFS:-}`, tab char ke IFS check |
-| FIX-PANIC | Section 5, `anf_panic` | `rm -f ~/.zsh_history` — destructive & irreversible | Ganti dengan `unset HISTFILE` + `fc -p /dev/null` saja |
-| FIX-ZLE | Section 11, `_af_ki_accept` | `BUFFER=[[ ... ]] && ... || ...` — syntax error zsh | Gunakan `if/else` yang proper |
+| FIX-GF | Section 3, `_af_canonicalize_command` | `${IFS}` variant not detected | Add `${IFS}`, `${IFS:-}`, tab char to the IFS check |
+| FIX-PANIC | Section 5, `anf_panic` | `rm -f ~/.zsh_history` — destructive & irreversible | Replace with `unset HISTFILE` + `fc -p /dev/null` only |
+| FIX-ZLE | Section 11, `_af_ki_accept` | `BUFFER=[[ ... ]] && ... \|\| ...` — zsh syntax error | Use a proper `if/else` |
 
 ### New Features
 
 #### GuardFall v2 [NEW-GF, NEW-GF-M, NEW-BENCH]
-- **Unicode normalization**: Hapus full-width chars (ｒｍ→rm), zero-width chars (U+200B), null bytes
+- **Unicode normalization**: Remove full-width chars (ｒｍ→rm), zero-width chars (U+200B), null bytes
 - **Expanded patterns**: env injection (`LD_PRELOAD`), path traversal (`../../../`), fork bomb (`:(){:|:&};:`)
-- **Metrics tracking**: TP, FP, FN, TN → Precision, Recall, F1, Accuracy (per-session)
-- **`/guardfall-metrics`**: Tampilkan & export JSON
-- **`/benchmark-guardfall`**: Labeled dataset (12 ATTACK + 8 BENIGN) dengan evaluasi kuantitatif
+- **Metrics tracking**: TP, FP, FN, TN → Precision, Recall, F1, Accuracy (per session)
+- **`/guardfall-metrics`**: Display & export JSON
+- **`/benchmark-guardfall`**: Labeled dataset (12 ATTACK + 8 BENIGN) with quantitative evaluation
 
 #### Math/ML Enhanced [NEW-ENT, NEW-BEACON, NEW-ISO]
 - **Entropy Bootstrap CI**: 95% Confidence Interval via 500 resamples
-- **Threshold empiris**: Divalidasi via ROC sweep (optimal H≈6.0, F1=1.0 pada 400 sampel)
-- **Beaconing Chi-Square**: Test H₀ uniformitas interval — H₀ ditolak → non-uniform → beaconing
-- **Beaconing Autocorrelation R(1)**: Periodik tinggi → R(1) → 1.0
-- **Isolation Forest**: Implementasi murni Python (tanpa scipy/sklearn) — Liu et al. (2008)
-- **Z-Score dipertahankan** sebagai baseline perbandingan untuk paper
+- **Empirical threshold**: Validated via ROC sweep (optimal H≈6.0, F1=1.0 on 400 samples)
+- **Beaconing Chi-Square**: Test H₀ of interval uniformity — H₀ rejected → non-uniform → beaconing
+- **Beaconing Autocorrelation R(1)**: High periodicity → R(1) → 1.0
+- **Isolation Forest**: Pure Python implementation (without scipy/sklearn) — Liu et al. (2008)
+- **Z-Score retained** as the comparison baseline for the paper
 
 #### Evaluation Framework [EVAL-01, EVAL-02]
-- **`/eval-entropy-roc`**: ROC sweep threshold 3.0–8.0, output CSV
-- **`/eval-compare-ml`**: Z-Score vs Isolation Forest dengan export ke file
+- **`/eval-entropy-roc`**: ROC sweep threshold 3.0–8.0, CSV output
+- **`/eval-compare-ml`**: Z-Score vs Isolation Forest with export to file
 - **`/eval-export-audit`**: Audit log JSONL → CSV (pandas-ready)
 
 #### C2 Improvements [NEW-C2LOG]
 - **JSONL session logging**: Timestamp, client IP, command, blocked status, output length
-- **`/c2-sessions`**: Tampilkan log dengan `jq` atau plaintext
-- **SIGTERM graceful shutdown**: Server mati bersih via `kill -TERM`
-- **Minimal ENV**: `PATH=/usr/bin:/bin:/usr/local/bin` saja — cegah env injection
+- **`/c2-sessions`**: Display the log with `jq` or plaintext
+- **SIGTERM graceful shutdown**: Server shuts down cleanly via `kill -TERM`
+- **Minimal ENV**: `PATH=/usr/bin:/bin:/usr/local/bin` only — prevents env injection
 
-#### Help Dikategorisasi [NEW-HELP]
-- 9 kategori: Core, Recon, OPSEC, C2 Framework, Math/ML, Security Engine, Evaluation, Defense, Output
+#### Categorized Help [NEW-HELP]
+- 9 categories: Core, Recon, OPSEC, C2 Framework, Math/ML, Security Engine, Evaluation, Defense, Output
 
-### Penambahan Commands
+### Added Commands
 ```
-/c2-sessions         # Lihat C2 session log
-/c2-zscore           # Z-Score baseline (untuk perbandingan paper)
+/c2-sessions         # View the C2 session log
+/c2-zscore           # Z-Score baseline (for paper comparison)
 /guardfall-metrics   # GuardFall TP/FP/F1
 /eval-entropy-roc    # ROC CSV export
 /eval-compare-ml     # ML comparison
@@ -356,15 +356,15 @@ Tidak ada command/versi baru — infrastruktur reproducibility:
 ```
 
 ### Test Suite
-- `test_suite.py`: 24 unit tests, 6 modul
-- 100% pass rate (24/24) — diverifikasi sebelum rilis
+- `test_suite.py`: 24 unit tests, 6 modules
+- 100% pass rate (24/24) — verified before release
 
 ---
 
 ## v13.0.0-ULTIMATE (Previous)
 - C2 framework: `os.popen()` (vulnerable)
 - GuardFall: basic patterns, no metrics
-- Entropy: hardcoded threshold tanpa justifikasi empiris
+- Entropy: hardcoded threshold without empirical justification
 - Beaconing: jitter only, no statistical test
 - ML: Z-Score only
 - No evaluation framework

@@ -2,126 +2,126 @@
 
 [![CI](../../actions/workflows/anf-research-shell-ci.yml/badge.svg)](../../actions/workflows/anf-research-shell-ci.yml)
 
-**Integrated & Reproducible Research Workbench — satu terminal untuk pekerjaan peneliti (science, math, CS), dengan output terukur dan tertelusur.**
-*v1.0.0 = struktur enterprise/research; v1.5.0+ = fokus research workbench.*
+**Integrated & Reproducible Research Workbench — one terminal for the researcher's work (science, math, CS), with measurable and traceable output.**
+*v1.0.0 = enterprise/research structure; v1.5.0+ = research workbench focus.*
 
-ANF membungkus perhitungan ilmiah, ML/DL, visualisasi, scaffolding eksperimen, dan verifikasi reproducibility ke satu CLI yang deterministik dan teruji.
-
----
-
-## Kenapa ANF (positioning — satu cerita)
-**ANF = Integrated & Reproducible Research Workbench.** Bukan sekadar shell, tapi satu terminal tempat semua pekerjaan peneliti (science, math, computer science) bisa dijalankan **konsisten, terukur, dan tertelusur**:
-
-- **Science & Math** — statistik, kalkulator, matematika simbolik, visualisasi
-- **ML / DL / Eval** — stack-check, benchmark deterministik, DL smoke test, scaffold eksperimen, data wrangling, bibliografi
-- **Reproducible** — seed deterministik, 25-test suite, scaffold eksperimen (`seed.txt`/`env.txt`/`run.sh`) per run
-- **Self-contained / Rapi** — auto-install tool Linux (`/ensure`), installer, git, docs
-
-Jalankan `anf why` untuk ringkasan singkat dan `anf help` untuk daftar command.
+ANF wraps scientific computation, ML/DL, visualization, experiment scaffolding, and reproducibility verification into a single deterministic and tested CLI.
 
 ---
 
-## Instalasi
+## Why ANF (positioning — one story)
+**ANF = Integrated & Reproducible Research Workbench.** Not just a shell, but one terminal where all the researcher's work (science, math, computer science) can be run **consistently, measurably, and traceably**:
+
+- **Science & Math** — statistics, calculator, symbolic mathematics, visualization
+- **ML / DL / Eval** — stack-check, deterministic benchmark, DL smoke test, experiment scaffold, data wrangling, bibliography
+- **Reproducible** — deterministic seed, 25-test suite, experiment scaffold (`seed.txt`/`env.txt`/`run.sh`) per run
+- **Self-contained / Tidy** — auto-install Linux tools (`/ensure`), installer, git, docs
+
+Run `anf why` for a brief summary and `anf help` for the command list.
+
+---
+
+## Installation
 ```bash
-./install.sh                 # instal ke /usr/local/bin + config + lib
-# atau tanpa root:
+./install.sh                 # install to /usr/local/bin + config + lib
+# or without root:
 ./install.sh --prefix "$HOME/.local"
 ```
 
-## Penggunaan
+## Usage
 ```bash
-anf                # shell interaktif (ZLE popup + banner)
-anf help           # daftar semua command
+anf                # interactive shell (ZLE popup + banner)
+anf help           # list all commands
 anf encode hello   # aGVsbG8=
 anf hash abc       # MD5/SHA256/SHA512
-anf status         # status sesi
-anf envcard        # ringkasan sistem & tools
-anf task start demo "python3 train.py"   # task tmux latar (survive restart)
-anf task list      # daftar task
-anf q "pattern" .  # pencarian cepat grep
-anf gitx s         # git status ringkas
+anf status         # session status
+anf envcard        # system & tools summary
+anf task start demo "python3 train.py"   # background tmux task (survives restart)
+anf task list      # task list
+anf q "pattern" .  # quick grep search
+anf gitx s         # concise git status
 anf gen "buat script backup"   # AI-assisted code gen (hermes/opencode)
 ```
 
-Di dalam shell: `/gen`, `/task`, `/q`, `/gitx`, `/envcard`, `/mvp` (alias `/cmd`).
+Inside the shell: `/gen`, `/task`, `/q`, `/gitx`, `/envcard`, `/mvp` (alias `/cmd`).
 
-## Research Suite — untuk peneliti (science, math, computer science)
-Semua pekerjaan riset dalam satu terminal:
+## Research Suite — for researchers (science, math, computer science)
+All research work in one terminal:
 ```bash
-anf mlinfo                    # stack ML/DL: torch/sklearn/numpy/CUDA
-anf stat data.txt             # statistik dataset: mean/median/std/entropy
-anf mlbench 400               # benchmark deterministik → research/outputs/*.csv
-anf dlcheck                   # smoke test DL CPU (torch, seed=42)
-anf dlcheck full              # mini-MLP 3 epoch synthetic
-anf paperstat manuscript.md   # statistik kata/baris/ref manuskrip
+anf mlinfo                    # ML/DL stack: torch/sklearn/numpy/CUDA
+anf stat data.txt             # dataset statistics: mean/median/std/entropy
+anf mlbench 400               # deterministic benchmark → research/outputs/*.csv
+anf dlcheck                   # DL CPU smoke test (torch, seed=42)
+anf dlcheck full              # synthetic 3-epoch mini-MLP
+anf paperstat manuscript.md   # manuscript word/line/ref statistics
 ```
-Fungsi historis (mis. `anf matrix` / MITRE ATT&CK, `c2-*`) tetap tersedia untuk kompatibilitas
-namun tidak dipromosikan sejak v1.6.0 — lihat CHANGELOG.
-Hasil benchmark ditulis otomatis ke `research/outputs/` — bukti numerik untuk reproducibility.
+Historical functions (e.g. `anf matrix` / MITRE ATT&CK, `c2-*`) remain available for compatibility
+but have not been promoted since v1.6.0 — see CHANGELOG.
+Benchmark results are written automatically to `research/outputs/` — numeric evidence for reproducibility.
 
-## Researcher Workflow (semua via terminal)
+## Researcher Workflow (all via terminal)
 ```bash
-anf plot data.csv 2 hist "judul"   # visualisasi -> research/outputs/*.png
-anf calc "sqrt(144)"               # kalkulator ilmiah
-anf sym "integrate(x**2, x)"       # matematika simbolik (sympy)
-anf sha manuscript.tex             # checksum reproducibility
+anf plot data.csv 2 hist "judul"   # visualization -> research/outputs/*.png
+anf calc "sqrt(144)"               # scientific calculator
+anf sym "integrate(x**2, x)"       # symbolic mathematics (sympy)
+anf sha manuscript.tex             # reproducibility checksum
 anf exp nama_eksperimen            # scaffold: folder+seed+env+run.sh
 anf csv summary data.csv           # data wrangling (pandas)
-anf bib references.bib             # validasi bibliografi
+anf bib references.bib             # bibliography validation
 ```
 
 ## Auto-Provisioning (Linux)
-Tool yang belum terpasang otomatis di-install:
+Tools that are not yet installed are installed automatically:
 ```bash
-anf ensure doctor   # cek tool wajib (dry, aman)
-anf ensure all      # auto-install yang kurang (konfirmasi dulu, butuh sudo)
+anf ensure doctor   # check required tools (dry, safe)
+anf ensure all      # auto-install what is missing (confirms first, needs sudo)
 ```
-Mendukung apt (Debian/Ubuntu), dnf (Fedora), pacman (Arch), brew (fallback). Fokus **Linux dulu** untuk stabilitas.
+Supports apt (Debian/Ubuntu), dnf (Fedora), pacman (Arch), brew (fallback). **Linux first** for stability.
 
-## Verifikasi (reproducibility)
+## Verification (reproducibility)
 ```bash
 zsh -n code/anf_research_shell.zsh        # MUST: SYNTAX OK
 python3 code/test_suite.py                # MUST: 25/25 pass
 bin/anf hash abc                          # MD5 90015098...
 ```
 
-## Verifikasi & reproduksibilitas
+## Verification & reproducibility
 ```bash
-make verify    # zsh -n + 25 test deterministik + smoke test launcher
-make setup     # opsional: .venv + requirements.txt (untuk command ML/DL)
+make verify    # zsh -n + 25 deterministic tests + launcher smoke test
+make setup     # optional: .venv + requirements.txt (for ML/DL commands)
 ```
 
-`make verify` hanya membutuhkan **zsh + Python 3 stdlib** — tanpa dataset eksternal,
-tanpa venv, tanpa jaringan. Gate-nya: syntax script inti, 25 unit test
-(entropy, ROC, GuardFall, beaconing, C2 math), lalu smoke launcher (`encode`, `hash`).
+`make verify` only requires **zsh + Python 3 stdlib** — no external dataset,
+no venv, no network. Its gates: core script syntax, 25 unit tests
+(entropy, ROC, GuardFall, beaconing, C2 math), then launcher smoke (`encode`, `hash`).
 
-Artefak eksperimen (`research/outputs/*.csv|*.png`) dihasilkan oleh `anf mlbench`,
-`anf plot`, dan `anf exp`; berkas hasil tidak di-commit (lihat `.gitignore`).
-Authorship & AI disclosure: lihat `NOTICE.md`.
+Experiment artifacts (`research/outputs/*.csv|*.png`) are produced by `anf mlbench`,
+`anf plot`, and `anf exp`; result files are not committed (see `.gitignore`).
+Authorship & AI disclosure: see `NOTICE.md`.
 
 ---
 
-## Struktur
+## Structure
 ```
 anf-research-shell/
-├── bin/anf                  # launcher CLI
+├── bin/anf                  # CLI launcher
 ├── Makefile                 # make setup / verify / test
-├── requirements.txt         # dependensi pin opsional (command ML/DL)
-├── LICENSE                  # MIT (kode)
-├── NOTICE.md                # authorship + AI disclosure + pernyataan standalone
-├── .github/workflows/ci.yml # CI: make verify di push/PR
-├── code/anf_research_shell.zsh  # script inti (64 fungsi, fokus riset; modul cyber diarsipkan terpisah)
-├── code/test_suite.py       # 25 test deterministik
-├── code/anfrc.dist          # template konfigurasi
-├── docs/CHANGELOG.md        # riwayat versi
+├── requirements.txt         # optional pinned dependencies (ML/DL commands)
+├── LICENSE                  # MIT (code)
+├── NOTICE.md                # authorship + AI disclosure + standalone statement
+├── .github/workflows/ci.yml # CI: make verify on push/PR
+├── code/anf_research_shell.zsh  # core script (64 functions, research focus; cyber module archived separately)
+├── code/test_suite.py       # 25 deterministic tests
+├── code/anfrc.dist          # configuration template
+├── docs/CHANGELOG.md        # version history
 └── install.sh               # installer
 ```
 
-## Kontribusi & etika
-Tool untuk **riset keamanan dan edukasi** (lingkungan lab/sendiri). Tidak untuk aktivitas ilegal. Penggunaan di luar lingkungan Anda sendiri menjadi tanggung jawab pengguna.
+## Contribution & ethics
+Tools for **security research and education** (lab/own environment). Not for illegal activity. Use outside your own environment is the user's responsibility.
 
 ## AI disclosure
-Tool dikembangkan & didokumentasikan dengan bantuan AI (Hermes, model DeepSeek V4 Flash). Penulis utama: **Afiq Andico Pangimpian** (Independent Researcher).
+The tool was developed & documented with the help of AI (Hermes, model DeepSeek V4 Flash). Lead author: **Afiq Andico Pangimpian** (Independent Researcher).
 
-## Lisensi
-Kode: **MIT** (lihat `LICENSE`, 2026).
+## License
+Code: **MIT** (see `LICENSE`, 2026).
