@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "Security Lab: purple-team CLI tools and security hygiene"
+type: software
+authors:
+  - family-names: Pangimpian
+    given-names: Afiq Andico
+    email: afiqandico13@gmail.com
+repository-code: https://github.com/afiqandico/security-lab
+license: MIT
+date-released: 2026-11-07
+abstract: >-
+  Small, dependency-light CLI tools for purple-team practice: secret scanning, container
+  misconfiguration, log anonymisation, shell hardening.
